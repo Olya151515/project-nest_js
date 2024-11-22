@@ -29,8 +29,9 @@ export class AnnouncementEntity {
   @Column('decimal', { precision: 10, scale: 3 })
   price: number;
 
-  @Column({ type: 'enum', enum: AnnouncementStatus })
-  status: AnnouncementStatus;
+  // @Column({ type: 'enum', enum: AnnouncementStatus })
+  // status: AnnouncementStatus;
+
   @CreateDateColumn()
   createdAt: Date;
 

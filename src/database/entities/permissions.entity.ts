@@ -10,11 +10,11 @@ export class PermissionEntity {
   @PrimaryGeneratedColumn()
   id: PermissionID;
 
-  @Column({ type: 'enum', enum: EntityEnum })
-  entity: EntityEnum;
+  // @Column({ type: 'enum', enum: EntityEnum })
+  // entity: EntityEnum;
 
-  @Column({ type: 'enum', enum: ActionEnum })
-  action: ActionEnum;
+  // @Column({ type: 'enum', enum: ActionEnum })
+  // action: ActionEnum;
 
   @ManyToMany(() => RoleEntity, (role) => role.permissions)
   roles: RoleEntity[];

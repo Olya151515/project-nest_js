@@ -4,3 +4,4 @@ export enum RoleEnum {
   SELLER = 'seller',
   BUYER = 'buyer',
 }
+export const RoleEnumArray = ['admin', 'manager', 'seller', 'buyer'];
