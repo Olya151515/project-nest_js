@@ -6,13 +6,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { AnnouncementID } from '../../common/types/entity-ids.type';
+import { AdvertisementID } from '../../common/types/entity-ids.type';
 import { AnnouncementStatus } from './enums/announcement-status.enum';
 
 @Entity('announcement')
 export class AnnouncementEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: AnnouncementID;
+  id: AdvertisementID;
 
   @Column('text')
   title: string;

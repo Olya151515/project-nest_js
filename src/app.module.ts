@@ -2,7 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import configuration from './configs/configuration';
-import { AnnouncementModule } from './modules/announcements/announcement.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { AdvertisementModule } from './modules/announcements/advertisement.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ManagerModule } from './modules/manager/manager.module';
+import { SellerModule } from './modules/seller(user)/seller.module';
 
 @Module({
   imports: [
@@ -10,7 +14,11 @@ import { AnnouncementModule } from './modules/announcements/announcement.module'
       load: [configuration],
       isGlobal: true,
     }),
-    AnnouncementModule,
+    AuthModule,
+    AdvertisementModule,
+    AdminModule,
+    ManagerModule,
+    SellerModule,
   ],
 })
 export class AppModule {}
