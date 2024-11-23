@@ -1,10 +1,20 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import { RoleID } from '../../common/types/entity-ids.type';
-import { ScopeEnum } from './enums/scope.enum';
+import { AdminID, RoleID } from '../../common/types/entity-ids.type';
+import { AdminEntity } from './admin.entity';
+import { TableNameEnum } from './enums/table-name.enum';
 import { PermissionEntity } from './permissions.entity';
 
-@Entity()
+@Entity(TableNameEnum.ROLE)
 export class RoleEntity {
   @PrimaryGeneratedColumn()
   id: RoleID;
@@ -13,8 +23,17 @@ export class RoleEntity {
   name: string;
 
   @Column()
-  scope: ScopeEnum;
+  scope: string;
+
+  @Column()
+  admin_id: AdminID;
+  @ManyToOne(() => AdminEntity, (admin) => admin.createdRoles, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'admin_id' })
+  createdBy: AdminEntity;
 
   @ManyToMany(() => PermissionEntity, (permission) => permission.roles)
+  @JoinTable()
   permissions: PermissionEntity[];
 }

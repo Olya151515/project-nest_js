@@ -1,20 +1,30 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import { PermissionID } from '../../common/types/entity-ids.type';
-import { ActionEnum } from './enums/action.enum';
-import { EntityEnum } from './enums/entity.enum';
+import { AdminID, PermissionID } from '../../common/types/entity-ids.type';
+import { AdminEntity } from './admin.entity';
+import { TableNameEnum } from './enums/table-name.enum';
 import { RoleEntity } from './role.entity';
 
-@Entity()
+@Entity(TableNameEnum.PERMISSION)
 export class PermissionEntity {
   @PrimaryGeneratedColumn()
   id: PermissionID;
 
-  // @Column({ type: 'enum', enum: EntityEnum })
-  // entity: EntityEnum;
+  @Column()
+  action: string;
 
-  // @Column({ type: 'enum', enum: ActionEnum })
-  // action: ActionEnum;
+  @Column()
+  admin_id: AdminID;
+  @ManyToOne(() => AdminEntity, { nullable: true })
+  @JoinColumn({ name: 'admin_id' })
+  createdBy: AdminEntity;
 
   @ManyToMany(() => RoleEntity, (role) => role.permissions)
   roles: RoleEntity[];

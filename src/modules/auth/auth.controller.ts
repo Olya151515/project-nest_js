@@ -14,10 +14,12 @@ export class AuthController {
 
   @Post('sign-up-admin')
   public async signUpAdmin(@Body() dto: SignUpReqDto): Promise<void> {
+    await this.authService.signUpAdmin(dto);
     console.log(dto); // зареєстровуватись можуть всі , окрім manager(його створює admin)
   }
   @Post('sign-up-seller')
   public async signUpSeller(@Body() dto: SignUpSellerReqDto): Promise<void> {
+    await this.authService.signUpSeller(dto);
     console.log(dto); // зареєстровуватись можуть всі , окрім manager(його створює admin)
   }
   @Post('sign-up-buyer')
