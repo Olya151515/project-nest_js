@@ -21,7 +21,7 @@ import { RoleEntity } from './role.entity';
 
 @Entity(TableNameEnum.SELLER)
 export class SellerEntity extends BaseUser {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: SellerID;
 
   @Column({ default: AccountEnum.BASE })

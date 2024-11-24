@@ -25,7 +25,7 @@ export class RefreshTokenEntity {
   refreshToken: string;
 
   @Column({ type: 'varchar', length: 255 }) // Використовуємо varchar для збереження user_id
-  user_id: userIDs;
+  user_id: string;
 
   @Column('text') // Використовуємо Enum для userType
   userRole: string;

@@ -5,6 +5,7 @@ import { CurrentUser } from './decorators/current-user-decorator';
 import { SignInReqDto } from './models/dto/req/sign-in.req.dto';
 import { SignUpReqDto } from './models/dto/req/sign-up.req.dto';
 import { SignUpSellerReqDto } from './models/dto/req/sign-up-seller.req.dto';
+import { AuthResDto } from './models/dto/res/auth.res.dto';
 import { AuthService } from './services/auth.service';
 
 @ApiTags('auth')
@@ -13,21 +14,22 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('sign-up-admin')
-  public async signUpAdmin(@Body() dto: SignUpReqDto): Promise<void> {
-    await this.authService.signUpAdmin(dto);
-    console.log(dto); // зареєстровуватись можуть всі , окрім manager(його створює admin)
+  public async signUpAdmin(@Body() dto: SignUpReqDto): Promise<AuthResDto> {
+    return await this.authService.signUpAdmin(dto);
   }
   @Post('sign-up-seller')
-  public async signUpSeller(@Body() dto: SignUpSellerReqDto): Promise<void> {
-    await this.authService.signUpSeller(dto);
-    console.log(dto); // зареєстровуватись можуть всі , окрім manager(його створює admin)
+  public async signUpSeller(
+    @Body() dto: SignUpSellerReqDto,
+  ): Promise<AuthResDto> {
+    return await this.authService.signUpSeller(dto);
   }
   @Post('sign-up-buyer')
   public async signUpBuyer(@Body() dto: SignUpReqDto): Promise<void> {
     console.log(dto); // зареєстровуватись можуть всі , окрім manager(його створює admin)
   }
   @Post('sign-in')
-  public async signIn(@Body() dto: SignInReqDto) {
+  public async signIn(@Body() dto: SignInReqDto): Promise<AuthResDto> {
+    return await this.authService.signIn(dto);
     console.log(dto);
   }
   @ApiBearerAuth()

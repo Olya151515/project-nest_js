@@ -1,6 +1,13 @@
-import { Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import { AdminID } from '../../common/types/entity-ids.type';
+import { AdminID, RoleID } from '../../common/types/entity-ids.type';
 import { TableNameEnum } from './enums/table-name.enum';
 import { ManagerEntity } from './manager.entity';
 import { BaseUser } from './models/base-user-model';
@@ -9,7 +16,7 @@ import { RoleEntity } from './role.entity';
 
 @Entity(TableNameEnum.ADMIN)
 export class AdminEntity extends BaseUser {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: AdminID;
 
   @OneToMany(() => RoleEntity, (role) => role.createdBy)
@@ -20,4 +27,11 @@ export class AdminEntity extends BaseUser {
 
   @OneToMany(() => ManagerEntity, (manager) => manager.createdBy)
   createdManagers?: ManagerEntity[];
+  //
+  // @Column()
+  // role_id: RoleID;
+  // @ManyToOne(() => RoleEntity)
+  // @JoinColumn({ name: 'role_id' })
+  @Column({ default: 'admin' })
+  role: string;
 }

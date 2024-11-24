@@ -1,4 +1,4 @@
 export enum ScopeEnum {
-  GLOBAL = 'GLOBAL',
-  LOCAL = 'LOCAL',
+  GLOBAL = 'global',
+  LOCAL = 'local',
 }

@@ -17,7 +17,7 @@ import { SellerEntity } from './seller.entity';
 
 @Entity(TableNameEnum.MANAGER)
 export class ManagerEntity extends BaseUser {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: ManagerID;
 
   @Column()

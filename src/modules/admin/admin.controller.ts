@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -7,15 +8,19 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import {
   ManagerID,
   PermissionID,
   RoleID,
 } from '../../common/types/entity-ids.type';
+import { CurrentUser } from '../auth/decorators/current-user-decorator';
+import { IUserData } from '../auth/models/interfaces/user-data';
+import { RoleReqDto } from './models/dto/req/role/role.req.dto';
 import { AdminService } from './services/admin.service';
 
+@ApiBearerAuth()
 @ApiTags('admin')
 @Controller('admin')
 export class AdminController {
@@ -23,7 +28,12 @@ export class AdminController {
   @Get('role')
   public async getAllRole() {}
   @Post('role')
-  public async createRole() {}
+  public async createRole(
+    @CurrentUser() userData: IUserData,
+    @Body() dto: RoleReqDto,
+  ) {
+    const result = await this.adminService.createRole(dto, userData);
+  }
   @Delete(':roleId')
   public async deleteRole(@Param('roleId', ParseUUIDPipe) roleId: RoleID) {}
   @Patch(':roleId')

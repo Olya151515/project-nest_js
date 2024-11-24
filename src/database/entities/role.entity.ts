@@ -16,7 +16,7 @@ import { PermissionEntity } from './permissions.entity';
 
 @Entity(TableNameEnum.ROLE)
 export class RoleEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: RoleID;
 
   @Column()

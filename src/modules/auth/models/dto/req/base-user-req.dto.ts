@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsIn, IsOptional, IsString, Length, Matches } from 'class-validator';
+import { IsOptional, IsString, Length, Matches } from 'class-validator';
 
 import { TransformerHelper } from '../../../../../common/helpers/transformer.helper';
-import { RoleEnumArray } from '../../../../../database/entities/enums/role-enum';
+import { RoleEnum } from '../../../../../database/entities/enums/role-enum';
 
 export class BaseUserReqDto {
   @IsOptional()
@@ -28,8 +28,4 @@ export class BaseUserReqDto {
   @IsString()
   @Length(0, 10)
   phone?: string;
-
-  @IsString()
-  @IsIn(RoleEnumArray)
-  role: string;
 }
