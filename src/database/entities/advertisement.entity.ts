@@ -17,7 +17,7 @@ import { SellerEntity } from './seller.entity';
 @Entity(TableNameEnum.ADVERTISEMENT)
 export class AdvertisementEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: AdvertisementID;
+  id: string;
 
   @Column('text')
   title: string;

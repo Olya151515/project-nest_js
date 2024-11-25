@@ -11,7 +11,6 @@ export class BaseAuthReqDto extends PickType(BaseUserReqDto, [
   'phone',
 ]) {
   @IsString()
-  //@IsIn(RoleEnumArray)
   @ApiProperty({
     enum: RoleEnum,
   })

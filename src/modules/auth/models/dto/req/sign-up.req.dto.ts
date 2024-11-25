@@ -2,6 +2,7 @@ import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsEmail, IsString } from 'class-validator';
 
 import { RoleEnum } from '../../../../../database/entities/enums/role-enum';
+import { RoleEntity } from '../../../../../database/entities/role.entity';
 import { BaseAuthReqDto } from './base-auth-req.dto';
 
 export class SignUpReqDto extends PickType(BaseAuthReqDto, [

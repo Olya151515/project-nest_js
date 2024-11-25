@@ -8,17 +8,17 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { BuyerID, ManagerID, RoleID } from '../../common/types/entity-ids.type';
+import { ManagerID } from '../../common/types/entity-ids.type';
 import { AdvertisementEntity } from './advertisement.entity';
 import { TableNameEnum } from './enums/table-name.enum';
 import { ManagerEntity } from './manager.entity';
-import { BaseUser } from './models/base-user-model';
+import { BaseUserEntity } from './models/base-user-model';
 import { RoleEntity } from './role.entity';
 
 @Entity(TableNameEnum.BUYER)
-export class BuyerEntity extends BaseUser {
+export class BuyerEntity extends BaseUserEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: BuyerID;
+  id: string;
 
   @Column()
   region: string;
@@ -29,11 +29,11 @@ export class BuyerEntity extends BaseUser {
   @Column({ nullable: true })
   banReason: string;
 
-  @Column()
-  role_id: RoleID;
-  @ManyToOne(() => RoleEntity)
-  @JoinColumn({ name: 'role_id' })
-  role: RoleEntity;
+  // @Column()
+  // role_id: string;
+  // @ManyToOne(() => RoleEntity, (role) => role.id)
+  // @JoinColumn({ name: 'role_id' })
+  // role: RoleEntity;
 
   @Column()
   manager_id: ManagerID;

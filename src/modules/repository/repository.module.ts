@@ -8,6 +8,7 @@ import { PermissionRepository } from './services/permission.repository';
 import { RefreshTokenRepository } from './services/refresh-token.repository';
 import { RoleRepository } from './services/role.repository';
 import { SellersRepository } from './services/sellers.repository';
+import { UsersRepository } from './services/users.repository';
 
 const repositories = [
   AdminRepository,
@@ -18,6 +19,7 @@ const repositories = [
   RefreshTokenRepository,
   RoleRepository,
   SellersRepository,
+  UsersRepository,
 ];
 @Global()
 @Module({

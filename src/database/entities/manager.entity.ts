@@ -7,36 +7,36 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { ManagerID, RoleID } from '../../common/types/entity-ids.type';
+import { RoleID } from '../../common/types/entity-ids.type';
 import { AdminEntity } from './admin.entity';
 import { BuyerEntity } from './buyer.entity';
 import { TableNameEnum } from './enums/table-name.enum';
-import { BaseUser } from './models/base-user-model';
+import { BaseUserEntity } from './models/base-user-model';
 import { RoleEntity } from './role.entity';
 import { SellerEntity } from './seller.entity';
 
 @Entity(TableNameEnum.MANAGER)
-export class ManagerEntity extends BaseUser {
+export class ManagerEntity extends BaseUserEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: ManagerID;
+  id: string;
 
   @Column()
   department?: string;
 
-  @OneToMany(() => BuyerEntity, (buyer) => buyer.bannedBy)
+  @OneToMany(() => BuyerEntity, (buyer) => buyer.bannedBy, { nullable: true })
   bannedBuyers?: BuyerEntity[];
 
-  @OneToMany(() => SellerEntity, (seller) => seller.bannedBy)
-  bannedSellers?: SellerEntity[];
-
-  @ManyToOne(() => AdminEntity, (admin) => admin.createdManagers, {
+  @OneToMany(() => SellerEntity, (seller) => seller.bannedBy, {
     nullable: true,
   })
+  bannedSellers?: SellerEntity[];
+
+  @ManyToOne(() => AdminEntity, (admin) => admin.createdManagers)
   createdBy?: AdminEntity;
 
-  @Column()
-  role_id: RoleID;
-  @ManyToOne(() => RoleEntity)
-  @JoinColumn({ name: 'role_id' })
-  role: RoleEntity;
+  // @Column()
+  // role_id: RoleID;
+  // @ManyToOne(() => RoleEntity, (role) => role.id)
+  // @JoinColumn({ name: 'role_id' })
+  // role: RoleEntity;
 }

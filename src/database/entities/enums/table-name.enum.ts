@@ -7,4 +7,5 @@ export enum TableNameEnum {
   ROLE = 'roles',
   PERMISSION = 'permissions',
   ADVERTISEMENT = 'advertisement',
+  USERS = 'users',
 }

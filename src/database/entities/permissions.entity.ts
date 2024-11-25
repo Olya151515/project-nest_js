@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -15,17 +16,18 @@ import { RoleEntity } from './role.entity';
 @Entity(TableNameEnum.PERMISSION)
 export class PermissionEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: PermissionID;
+  id: string;
 
   @Column()
   action: string;
 
   @Column()
-  admin_id: AdminID;
-  @ManyToOne(() => AdminEntity, { nullable: true })
+  admin_id: string;
+  @ManyToOne(() => AdminEntity)
   @JoinColumn({ name: 'admin_id' })
-  createdBy: AdminEntity;
+  createdBy?: AdminEntity;
 
   @ManyToMany(() => RoleEntity, (role) => role.permissions)
+  @JoinTable()
   roles: RoleEntity[];
 }

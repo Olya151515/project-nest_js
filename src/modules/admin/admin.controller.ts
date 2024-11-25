@@ -25,8 +25,6 @@ import { AdminService } from './services/admin.service';
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
-  @Get('role')
-  public async getAllRole() {}
   @Post('role')
   public async createRole(
     @CurrentUser() userData: IUserData,
@@ -34,20 +32,16 @@ export class AdminController {
   ) {
     const result = await this.adminService.createRole(dto, userData);
   }
+  @Get('role')
+  public async getAllRole() {}
   @Delete(':roleId')
   public async deleteRole(@Param('roleId', ParseUUIDPipe) roleId: RoleID) {}
   @Patch(':roleId')
   public async updateRole(@Param('roleId', ParseUUIDPipe) roleId: RoleID) {}
   @Get('permission')
   public async getAllPermissions() {}
-  @Post('permission')
-  public async createPermission() {}
   @Delete(':permissionId')
   public async deletePermission(
-    @Param('permissionId', ParseUUIDPipe) permissionId: PermissionID,
-  ) {}
-  @Patch(':permissionId')
-  public async updatePermission(
     @Param('permissionId', ParseUUIDPipe) permissionId: PermissionID,
   ) {}
   @Get('managers')

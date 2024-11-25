@@ -20,7 +20,6 @@ export class RoleReqDto {
 
   @IsArray()
   @IsString({ each: true })
-  @Length(3, 30, { each: true })
   @ArrayMaxSize(5)
   permissions: string[];
 }

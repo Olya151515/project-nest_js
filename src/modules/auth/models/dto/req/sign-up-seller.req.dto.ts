@@ -17,13 +17,14 @@ export class SignUpSellerReqDto extends PickType(BaseAuthReqDto, [
     enum: RoleEnum,
     example: 'seller',
   })
-  role: string;
+  role_name: string;
 
   @ApiProperty({
     description: 'Тип облікового запису',
     enum: AccountEnum,
     example: 'base',
   })
+  @IsString()
   accountType: string;
 
   @IsString()

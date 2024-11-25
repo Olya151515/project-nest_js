@@ -1,22 +1,15 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-import {
-  AdminID,
-  BuyerID,
-  ManagerID,
-  RefreshTokenID,
-  SellerID,
-} from '../../common/types/entity-ids.type';
 import { TableNameEnum } from './enums/table-name.enum';
 
 export type userIDs = {
-  user_id: AdminID | SellerID | BuyerID | ManagerID;
+  user_id: string;
 };
 
 @Entity(TableNameEnum.REFRESH_TOKENS)
 export class RefreshTokenEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: RefreshTokenID;
+  id: string;
 
   @Column('text')
   deviceId: string;
@@ -24,7 +17,7 @@ export class RefreshTokenEntity {
   @Column('text')
   refreshToken: string;
 
-  @Column({ type: 'varchar', length: 255 }) // Використовуємо varchar для збереження user_id
+  @Column({ nullable: false })
   user_id: string;
 
   @Column('text') // Використовуємо Enum для userType

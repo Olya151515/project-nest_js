@@ -7,22 +7,17 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {
-  ManagerID,
-  RoleID,
-  SellerID,
-} from '../../common/types/entity-ids.type';
 import { AdvertisementEntity } from './advertisement.entity';
 import { AccountEnum } from './enums/account-enum';
 import { TableNameEnum } from './enums/table-name.enum';
 import { ManagerEntity } from './manager.entity';
-import { BaseUser } from './models/base-user-model';
+import { BaseUserEntity } from './models/base-user-model';
 import { RoleEntity } from './role.entity';
 
 @Entity(TableNameEnum.SELLER)
-export class SellerEntity extends BaseUser {
+export class SellerEntity extends BaseUserEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: SellerID;
+  id: string;
 
   @Column({ default: AccountEnum.BASE })
   accountType: string;
@@ -42,17 +37,20 @@ export class SellerEntity extends BaseUser {
   @OneToMany(() => AdvertisementEntity, (ad) => ad.seller)
   advertisements?: AdvertisementEntity[];
 
-  @Column()
-  manager_id: ManagerID;
+  @Column({ nullable: true })
+  manager_id: string;
   @ManyToOne(() => ManagerEntity, (manager) => manager.bannedSellers, {
     nullable: true,
   })
   @JoinColumn({ name: 'manager_id' })
-  bannedBy: ManagerEntity;
+  bannedBy?: ManagerEntity;
 
   @Column()
-  role_id: RoleID;
-  @ManyToOne(() => RoleEntity)
-  @JoinColumn({ name: 'role_id' })
-  role: RoleEntity;
+  role_name: string;
+
+  // @Column()
+  // role_id: string;
+  // @ManyToOne(() => RoleEntity, (role) => role.id)
+  // @JoinColumn({ name: 'role_id' })
+  // role: RoleEntity;
 }

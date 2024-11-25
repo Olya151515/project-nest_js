@@ -1,23 +1,24 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { AdminID, RoleID } from '../../common/types/entity-ids.type';
 import { AdminEntity } from './admin.entity';
 import { TableNameEnum } from './enums/table-name.enum';
+import { ManagerEntity } from './manager.entity';
+import { BaseUserEntity } from './models/base-user-model';
 import { PermissionEntity } from './permissions.entity';
+import { SellerEntity } from './seller.entity';
 
 @Entity(TableNameEnum.ROLE)
 export class RoleEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: RoleID;
+  id: string;
 
   @Column()
   name: string;
@@ -25,15 +26,22 @@ export class RoleEntity {
   @Column()
   scope: string;
 
-  @Column()
-  admin_id: AdminID;
+  @Column({ nullable: false })
+  admin_id: string;
   @ManyToOne(() => AdminEntity, (admin) => admin.createdRoles, {
-    nullable: true,
+    onDelete: 'CASCADE', // якщо видалиться admin , тоді і видалити його roles
   })
   @JoinColumn({ name: 'admin_id' })
-  createdBy: AdminEntity;
+  createdBy?: AdminEntity;
 
   @ManyToMany(() => PermissionEntity, (permission) => permission.roles)
-  @JoinTable()
   permissions: PermissionEntity[];
+
+  @Column({ nullable: true })
+  user_id: string;
+
+  // Поліморфний зв'язок на базовий UserEntity
+  @ManyToOne(() => BaseUserEntity, (user) => user.roles, { nullable: true })
+  @JoinColumn({ name: 'user_id' })
+  user?: BaseUserEntity;
 }

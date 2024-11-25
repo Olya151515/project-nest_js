@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager, In } from 'typeorm';
 
@@ -25,9 +25,18 @@ export class AdminService {
       const permissions = await this.createPermissions(
         dto.permissions,
         manager,
+        userData,
       );
+      const existRole = await roleRepository.findOneBy({ name: dto.name });
+      if (existRole) {
+        throw new ConflictException('Role is already exists');
+      }
       return await roleRepository.save(
-        roleRepository.create({ ...dto, permissions, admin_id: userData.id }),
+        roleRepository.create({
+          ...dto,
+          permissions,
+          admin_id: userData.user_id,
+        }),
       );
     });
   }
@@ -35,6 +44,7 @@ export class AdminService {
   public async createPermissions(
     permissions: string[],
     manager: EntityManager,
+    userData: IUserData,
   ): Promise<PermissionEntity[]> {
     if (!permissions || !permissions.length) return [];
     const permissionRepository = manager.getRepository(PermissionEntity);
@@ -47,9 +57,12 @@ export class AdminService {
     );
     const newEntities = await permissionRepository.save(
       newPermissions.map((permission) =>
-        permissionRepository.create({ action: permission }),
+        permissionRepository.create({
+          action: permission,
+          admin_id: userData.user_id,
+        }),
       ),
     );
-    return { ...entities, ...newEntities };
+    return [...entities, ...newEntities];
   }
 }
