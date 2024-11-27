@@ -1,15 +1,44 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { TableNameEnum } from './enums/table-name.enum';
 import { ManagerEntity } from './manager.entity';
-import { BaseUserEntity } from './models/base-user-model';
 import { PermissionEntity } from './permissions.entity';
 import { RoleEntity } from './role.entity';
 
 @Entity(TableNameEnum.ADMIN)
-export class AdminEntity extends BaseUserEntity {
+export class AdminEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+  @Column()
+  name: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column()
+  password: string;
+
+  @Column()
+  phone: string;
+
+  @Column()
+  role: string;
+
+  @Column()
+  role_scope: string;
+
+  @CreateDateColumn()
+  createdAt?: Date;
+
+  @UpdateDateColumn()
+  updatedAt?: Date;
 
   @OneToMany(() => RoleEntity, (role) => role.createdBy)
   createdRoles: RoleEntity[];
@@ -24,6 +53,6 @@ export class AdminEntity extends BaseUserEntity {
   // role_id: RoleID;
   // @ManyToOne(() => RoleEntity)
   // @JoinColumn({ name: 'role_id' })
-  @Column({ default: 'admin' })
-  role: string;
+  // @Column({ default: 'admin' })
+  // role: string;
 }

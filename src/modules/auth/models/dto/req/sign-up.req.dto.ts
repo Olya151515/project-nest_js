@@ -1,8 +1,6 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
+import { PickType } from '@nestjs/swagger';
 import { IsEmail, IsString } from 'class-validator';
 
-import { RoleEnum } from '../../../../../database/entities/enums/role-enum';
-import { RoleEntity } from '../../../../../database/entities/role.entity';
 import { BaseAuthReqDto } from './base-auth-req.dto';
 
 export class SignUpReqDto extends PickType(BaseAuthReqDto, [
@@ -11,14 +9,9 @@ export class SignUpReqDto extends PickType(BaseAuthReqDto, [
   'name',
   'deviceId',
   'phone',
-]) {
-  @IsString()
-  //@IsIn(RoleEnumArray)
-  @ApiProperty({
-    enum: RoleEnum,
-  })
-  role: string;
-}
+  'role',
+  'role_scope',
+]) {}
 export class SignUpDtoReq {
   @IsEmail()
   email: string;

@@ -1,6 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { TableNameEnum } from './enums/table-name.enum';
+import { RoleEntity } from './role.entity';
 
 @Entity(TableNameEnum.USERS)
 export class UsersEntity {
@@ -15,4 +22,10 @@ export class UsersEntity {
 
   @Column()
   password: string;
+
+  @Column({ nullable: true })
+  role_id: string;
+  @ManyToOne(() => RoleEntity, (role) => role.users, { nullable: true })
+  @JoinColumn({ name: 'role_id' })
+  role?: RoleEntity;
 }

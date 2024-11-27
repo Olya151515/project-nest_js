@@ -13,7 +13,8 @@ export class BaseUserMapper {
       phone: user.phone,
       name: user.name,
       email: user.email,
-      role: user.role.name,
+      role: user.role,
+      role_scope: user.role_scope,
     };
   }
 }

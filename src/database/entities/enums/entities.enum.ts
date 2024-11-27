@@ -6,3 +6,6 @@ import { SellerEntity } from '../seller.entity';
 export type EntitiesEnum = {
   entity: ManagerEntity | BuyerEntity | SellerEntity;
 };
+export type EntitiesALl = {
+  entity: AdminEntity | ManagerEntity | BuyerEntity | SellerEntity;
+};

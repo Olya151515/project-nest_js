@@ -10,10 +10,9 @@ import {
 
 import { AdminEntity } from './admin.entity';
 import { TableNameEnum } from './enums/table-name.enum';
-import { ManagerEntity } from './manager.entity';
-import { BaseUserEntity } from './models/base-user-model';
+import { BaseUserModel } from './models/base-user.model';
 import { PermissionEntity } from './permissions.entity';
-import { SellerEntity } from './seller.entity';
+import { UsersEntity } from './users.entity';
 
 @Entity(TableNameEnum.ROLE)
 export class RoleEntity {
@@ -30,18 +29,16 @@ export class RoleEntity {
   admin_id: string;
   @ManyToOne(() => AdminEntity, (admin) => admin.createdRoles, {
     onDelete: 'CASCADE', // якщо видалиться admin , тоді і видалити його roles
+    nullable: true,
   })
   @JoinColumn({ name: 'admin_id' })
   createdBy?: AdminEntity;
 
-  @ManyToMany(() => PermissionEntity, (permission) => permission.roles)
+  @ManyToMany(() => PermissionEntity, (permission) => permission.roles, {
+    onDelete: 'CASCADE',
+  })
   permissions: PermissionEntity[];
 
-  @Column({ nullable: true })
-  user_id: string;
-
-  // Поліморфний зв'язок на базовий UserEntity
-  @ManyToOne(() => BaseUserEntity, (user) => user.roles, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
-  user?: BaseUserEntity;
+  @OneToMany(() => UsersEntity, (user) => user.role, { nullable: true })
+  users?: BaseUserModel[];
 }

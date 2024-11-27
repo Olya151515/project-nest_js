@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsOptional, IsString, Length, Matches } from 'class-validator';
+import { IsEnum, IsOptional, IsString, Length, Matches } from 'class-validator';
 
 import { TransformerHelper } from '../../../../../common/helpers/transformer.helper';
 import { RoleEnum } from '../../../../../database/entities/enums/role-enum';
+import { ScopeEnum } from '../../../../../database/entities/enums/scope.enum';
 
 export class BaseUserReqDto {
   @IsOptional()
@@ -28,4 +29,12 @@ export class BaseUserReqDto {
   @IsString()
   @Length(0, 10)
   phone?: string;
+
+  @IsString()
+  @IsEnum(RoleEnum)
+  role: string;
+
+  @IsString()
+  @IsEnum(ScopeEnum)
+  role_scope: string;
 }

@@ -1,22 +1,19 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { RoleID } from '../../common/types/entity-ids.type';
 import { AdminEntity } from './admin.entity';
 import { BuyerEntity } from './buyer.entity';
 import { TableNameEnum } from './enums/table-name.enum';
-import { BaseUserEntity } from './models/base-user-model';
-import { RoleEntity } from './role.entity';
+import { BaseUserModel } from './models/base-user.model';
 import { SellerEntity } from './seller.entity';
 
 @Entity(TableNameEnum.MANAGER)
-export class ManagerEntity extends BaseUserEntity {
+export class ManagerEntity extends BaseUserModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

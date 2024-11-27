@@ -9,11 +9,13 @@ export class BaseUserResDto extends PickType(BaseUserReqDto, [
   'name',
   'phone',
   'email',
+  'role',
+  'role_scope',
 ]) {
-  @IsString()
-  //@IsIn(RoleEnumArray)
-  @ApiProperty({
-    enum: RoleEnum,
-  })
-  role: string;
+  // @IsString()
+  // //@IsIn(RoleEnumArray)
+  // @ApiProperty({
+  //   enum: RoleEnum,
+  // })
+  // role: RoleEntity;
 }

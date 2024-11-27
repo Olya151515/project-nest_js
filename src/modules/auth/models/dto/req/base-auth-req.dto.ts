@@ -1,7 +1,6 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
+import { PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { RoleEnum } from '../../../../../database/entities/enums/role-enum';
 import { BaseUserReqDto } from './base-user-req.dto';
 
 export class BaseAuthReqDto extends PickType(BaseUserReqDto, [
@@ -9,12 +8,14 @@ export class BaseAuthReqDto extends PickType(BaseUserReqDto, [
   'password',
   'name',
   'phone',
+  'role',
+  'role_scope',
 ]) {
-  @IsString()
-  @ApiProperty({
-    enum: RoleEnum,
-  })
-  role: string;
+  //   @IsString()
+  //   @ApiProperty({
+  //     enum: RoleEnum,
+  //   })
+  //   role: string;
   @IsNotEmpty()
   @IsString()
   readonly deviceId: string; // щоб привязувати tokens до конкретного device , щоб потім ідентифікувати девайси

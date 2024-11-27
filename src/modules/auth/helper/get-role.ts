@@ -1,6 +1,6 @@
 import { RoleEnum } from '../../../database/entities/enums/role-enum';
 
-export const getRepository = (role: RoleEnum): string => {
+export const getRepository = (role: string): string => {
   switch (role) {
     case RoleEnum.ADMIN:
       return 'adminRepository';

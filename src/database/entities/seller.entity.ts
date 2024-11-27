@@ -11,11 +11,10 @@ import { AdvertisementEntity } from './advertisement.entity';
 import { AccountEnum } from './enums/account-enum';
 import { TableNameEnum } from './enums/table-name.enum';
 import { ManagerEntity } from './manager.entity';
-import { BaseUserEntity } from './models/base-user-model';
-import { RoleEntity } from './role.entity';
+import { BaseUserModel } from './models/base-user.model';
 
 @Entity(TableNameEnum.SELLER)
-export class SellerEntity extends BaseUserEntity {
+export class SellerEntity extends BaseUserModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -45,8 +44,8 @@ export class SellerEntity extends BaseUserEntity {
   @JoinColumn({ name: 'manager_id' })
   bannedBy?: ManagerEntity;
 
-  @Column()
-  role_name: string;
+  // @Column()
+  // role_name: string;
 
   // @Column()
   // role_id: string;

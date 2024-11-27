@@ -1,5 +1,8 @@
 import { AdminEntity } from '../../../database/entities/admin.entity';
-import { EntitiesEnum } from '../../../database/entities/enums/entities.enum';
+import {
+  EntitiesALl,
+  EntitiesEnum,
+} from '../../../database/entities/enums/entities.enum';
 import { IJwtPayload } from '../../auth/models/interfaces/jwt-payload.interface';
 import { IUserData } from '../../auth/models/interfaces/user-data';
 import { BaseAdminResDto } from '../models/dto/res/base-admin.res.dto';
@@ -12,13 +15,14 @@ export class AdminMapper {
       name: user.name,
       email: user.email,
       role: user.role,
+      role_scope: user.role_scope,
     };
   }
 
   public static toIAdminData(
     user: AdminEntity,
     payload: IJwtPayload,
-  ): IUserData {
+  ): Partial<IUserData> {
     return {
       user_id: user.id,
       email: user.email,
@@ -26,13 +30,14 @@ export class AdminMapper {
     };
   }
   public static toIUserData(
-    user: EntitiesEnum,
+    user: EntitiesALl,
     payload: IJwtPayload,
   ): IUserData {
     return {
       user_id: user.entity.id,
       email: user.entity.email,
-      role_name: user.entity.role.name,
+      role_name: user.entity.role,
+      deviceId: payload.deviceId,
     };
   }
 }

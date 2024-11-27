@@ -57,13 +57,20 @@ export class JwtAccessGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    if (payload.role === 'admin') {
-      request.res.locals.user = AdminMapper.toIAdminData(
-        await this.adminRepository.findOneBy({ id: payload.user_Id }),
-        payload,
-      );
-      return true;
-    }
+    // if (payload.role === 'admin') {
+    //   const admin = await this.adminRepository.findOneBy({
+    //     id: payload.user_Id,
+    //   });
+    //   if (!admin) {
+    //     throw new UnauthorizedException();
+    //   }
+    //   request.res.locals.user = AdminMapper.toIAdminData(
+    //     await this.adminRepository.findOneBy({ id: payload.user_Id }),
+    //     payload,
+    //   );
+    //   return true;
+    // }
+
     const user = await this.getRepository(payload.role).findOneBy({
       id: payload.user_Id,
     });
@@ -81,6 +88,8 @@ export class JwtAccessGuard implements CanActivate {
 
   getRepository(role: string) {
     switch (role) {
+      case RoleEnum.ADMIN:
+        return this.adminRepository;
       case RoleEnum.SELLER:
         return this.sellerRepository;
       case RoleEnum.MANAGER:

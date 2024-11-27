@@ -1,12 +1,16 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from './decorators/current-user-decorator';
 import { SkipAuth } from './decorators/skip-auth-decorator';
+import { JwtRefreshGuard } from './guards/jwt-refresh-guard';
 import { SignInReqDto } from './models/dto/req/sign-in.req.dto';
 import { SignUpReqDto } from './models/dto/req/sign-up.req.dto';
+import { SignUpBuyerReqDto } from './models/dto/req/sign-up-buyer.req.dto';
 import { SignUpSellerReqDto } from './models/dto/req/sign-up-seller.req.dto';
 import { AuthResDto } from './models/dto/res/auth.res.dto';
+import { ITokenPair } from './models/interfaces/token-pair.interface';
+import { IUserData } from './models/interfaces/user-data';
 import { AuthService } from './services/auth.service';
 
 @ApiTags('auth')
@@ -25,9 +29,12 @@ export class AuthController {
   ): Promise<AuthResDto> {
     return await this.authService.signUpSeller(dto);
   }
+  @SkipAuth()
   @Post('sign-up-buyer')
-  public async signUpBuyer(@Body() dto: SignUpReqDto): Promise<void> {
-    console.log(dto); // зареєстровуватись можуть всі , окрім manager(його створює admin)
+  public async signUpBuyer(
+    @Body() dto: SignUpBuyerReqDto,
+  ): Promise<AuthResDto> {
+    return await this.authService.signUpBuyer(dto);
   }
 
   @SkipAuth()
@@ -36,9 +43,18 @@ export class AuthController {
     return await this.authService.signIn(dto);
   }
   @ApiBearerAuth()
-  @Post('sign-out') //  ми хочемо робити sigh-out тільки коли ми авторизовані
-  public async signOut(@CurrentUser() userData: any): Promise<void> {}
+  @Post('sign-out')
+  public async signOut(@CurrentUser() userData: IUserData): Promise<void> {
+    return await this.authService.signOut(userData);
+  }
+
+  @SkipAuth()
   @ApiBearerAuth()
-  @Post('refresh') // видалення наших tokens  і створення нової пари tokens
-  public async refresh(@CurrentUser() userData: any) {}
+  @UseGuards(JwtRefreshGuard)
+  @Post('refresh')
+  public async refresh(
+    @CurrentUser() userData: IUserData,
+  ): Promise<ITokenPair> {
+    return await this.authService.refresh(userData);
+  }
 }

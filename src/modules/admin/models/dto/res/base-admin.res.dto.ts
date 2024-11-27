@@ -7,6 +7,8 @@ export class BaseAdminResDto extends PickType(BaseUserResDto, [
   'email',
   'name',
   'phone',
+  'role_scope',
+  'role',
 ]) {
   @ApiProperty()
   id: string;

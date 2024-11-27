@@ -11,14 +11,9 @@ export class SignUpSellerReqDto extends PickType(BaseAuthReqDto, [
   'name',
   'deviceId',
   'phone',
+  'role',
+  'role_scope',
 ]) {
-  @IsString()
-  @ApiProperty({
-    enum: RoleEnum,
-    example: 'seller',
-  })
-  role_name: string;
-
   @ApiProperty({
     description: 'Тип облікового запису',
     enum: AccountEnum,
@@ -34,12 +29,12 @@ export class SignUpSellerReqDto extends PickType(BaseAuthReqDto, [
   region: string;
 }
 
-export class SignUpSeller {
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  accountType: string;
-  shopName: string;
-  region: string;
-}
+// export class SignUpSeller {
+//   name: string;
+//   email: string;
+//   password: string;
+//   phone: string;
+//   accountType: string;
+//   shopName: string;
+//   region: string;
+// }

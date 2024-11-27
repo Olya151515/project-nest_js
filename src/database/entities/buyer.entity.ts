@@ -12,11 +12,10 @@ import { ManagerID } from '../../common/types/entity-ids.type';
 import { AdvertisementEntity } from './advertisement.entity';
 import { TableNameEnum } from './enums/table-name.enum';
 import { ManagerEntity } from './manager.entity';
-import { BaseUserEntity } from './models/base-user-model';
-import { RoleEntity } from './role.entity';
+import { BaseUserModel } from './models/base-user.model';
 
 @Entity(TableNameEnum.BUYER)
-export class BuyerEntity extends BaseUserEntity {
+export class BuyerEntity extends BaseUserModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -29,14 +28,8 @@ export class BuyerEntity extends BaseUserEntity {
   @Column({ nullable: true })
   banReason: string;
 
-  // @Column()
-  // role_id: string;
-  // @ManyToOne(() => RoleEntity, (role) => role.id)
-  // @JoinColumn({ name: 'role_id' })
-  // role: RoleEntity;
-
-  @Column()
-  manager_id: ManagerID;
+  @Column({ nullable: true })
+  manager_id: string;
   @ManyToOne(() => ManagerEntity, (manager) => manager.bannedBuyers, {
     nullable: true,
   })

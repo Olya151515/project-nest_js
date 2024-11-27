@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { AdminID, PermissionID } from '../../common/types/entity-ids.type';
 import { AdminEntity } from './admin.entity';
 import { TableNameEnum } from './enums/table-name.enum';
 import { RoleEntity } from './role.entity';

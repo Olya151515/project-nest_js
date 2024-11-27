@@ -5,18 +5,24 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+import { EntitiesALl } from '../../../database/entities/enums/entities.enum';
+import { RoleEntity } from '../../../database/entities/role.entity';
 import { AdminMapper } from '../../admin/services/admin.mapper';
 import { AdminRepository } from '../../repository/services/admin.repository';
 import { BuyersRepository } from '../../repository/services/buyers.repository';
 import { ManagersRepository } from '../../repository/services/managers.repository';
 import { RefreshTokenRepository } from '../../repository/services/refresh-token.repository';
+import { RoleRepository } from '../../repository/services/role.repository';
 import { SellersRepository } from '../../repository/services/sellers.repository';
 import { UsersRepository } from '../../repository/services/users.repository';
+import { getRepository } from '../helper/get-role';
 import { SignInReqDto } from '../models/dto/req/sign-in.req.dto';
 import { SignUpReqDto } from '../models/dto/req/sign-up.req.dto';
+import { SignUpBuyerReqDto } from '../models/dto/req/sign-up-buyer.req.dto';
 import { SignUpSellerReqDto } from '../models/dto/req/sign-up-seller.req.dto';
 import { AuthResDto } from '../models/dto/res/auth.res.dto';
 import { ITokenPair } from '../models/interfaces/token-pair.interface';
+import { IUserData } from '../models/interfaces/user-data';
 import { AuthCacheService } from './auth-cache-service';
 import { BaseUserMapper } from './baseUser.mapper';
 import { TokenService } from './token.service';
@@ -32,6 +38,7 @@ export class AuthService {
     private readonly authCacheService: AuthCacheService,
     private readonly refreshTokenRepository: RefreshTokenRepository,
     private readonly usersRepository: UsersRepository,
+    private readonly roleRepository: RoleRepository,
   ) {}
 
   public async signUpAdmin(dto: SignUpReqDto): Promise<AuthResDto> {
@@ -42,15 +49,10 @@ export class AuthService {
     const user = await this.adminRepository.save(
       this.adminRepository.create({ ...dto, password: passwordHash }),
     );
+    const role = await this.roleRepository.initializeAdminRole(user);
 
-    await this.usersRepository.save(
-      this.usersRepository.create({
-        email: dto.email,
-        password: passwordHash,
-        user_id: user.id,
-      }),
-    );
-    const tokens = await this.GenerateAndSaveTokens(
+    await this.saveUser({ entity: user }, passwordHash, role);
+    const tokens = await this.generateAndSaveTokens(
       user.id,
       user.role,
       dto.deviceId,
@@ -58,22 +60,47 @@ export class AuthService {
     return { user: AdminMapper.toResDto(user), tokens };
   }
 
-  public async signUpSeller(dto: SignUpSellerReqDto): Promise<any> {
+  public async signUpSeller(dto: SignUpSellerReqDto): Promise<AuthResDto> {
     await this.isEmailNotExistOrThrow(dto.email);
-
+    const role = await this.checkRoleExist(dto.role, dto.role_scope);
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
     const user = await this.sellersRepository.save(
       this.sellersRepository.create({
         ...dto,
-        role_name: dto.role_name,
+        role: dto.role,
         password: passwordHash,
       }),
     );
 
-    const tokens = await this.GenerateAndSaveTokens(
+    await this.saveUser({ entity: user }, passwordHash, role);
+    const tokens = await this.generateAndSaveTokens(
       user.id,
-      user.role_id,
+      user.role,
+      dto.deviceId,
+    );
+
+    return { user: BaseUserMapper.toResDto(user), tokens };
+  }
+  public async signUpBuyer(dto: SignUpBuyerReqDto): Promise<AuthResDto> {
+    await this.isEmailNotExistOrThrow(dto.email);
+
+    const role = await this.checkRoleExist(dto.role, dto.role_scope);
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+
+    const user = await this.buyersRepository.save(
+      this.sellersRepository.create({
+        ...dto,
+        role: dto.role,
+        password: passwordHash,
+      }),
+    );
+
+    await this.saveUser({ entity: user }, passwordHash, role);
+
+    const tokens = await this.generateAndSaveTokens(
+      user.id,
+      user.role,
       dto.deviceId,
     );
 
@@ -95,7 +122,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const tokens = await this.GenerateAndSaveTokens(
+    const tokens = await this.generateAndSaveTokens(
       user.user_id,
       dto.role,
       dto.deviceId,
@@ -126,20 +153,56 @@ export class AuthService {
     return { user: BaseUserMapper.toResDto(userEntity), tokens };
   }
 
-  // private getRepository(role: string): Repository<any> {
-  //   switch (role) {
-  //     case 'admin':
-  //       return this.adminRepository;
-  //     case 'manager':
-  //       return this.managersRepository;
-  //     case 'seller':
-  //       return this.sellersRepository;
-  //     case 'buyer':
-  //       return this.buyersRepository;
-  //   }
-  // }
+  public async signOut(userData: IUserData): Promise<void> {
+    await Promise.all([
+      await this.authCacheService.deleteToken(
+        userData.user_id,
+        userData.deviceId,
+      ),
+      await this.refreshTokenRepository.delete({
+        user_id: userData.user_id,
+        deviceId: userData.deviceId,
+      }),
+    ]);
+  }
 
-  private async GenerateAndSaveTokens(
+  public async refresh(userData: IUserData): Promise<ITokenPair> {
+    await this.signOut(userData);
+
+    return await this.generateAndSaveTokens(
+      userData.user_id,
+      userData.role_name,
+      userData.deviceId,
+    );
+  }
+
+  private async saveUser(
+    user: EntitiesALl,
+    password: string,
+    role: RoleEntity,
+  ): Promise<any> {
+    await this.usersRepository.save(
+      this.usersRepository.create({
+        email: user.entity.email,
+        password: password,
+        user_id: user.entity.id,
+        role_id: role.id,
+      }),
+    );
+  }
+  private async checkRoleExist(
+    roleName: string,
+    role_scape: string,
+  ): Promise<RoleEntity> {
+    const role = await this.roleRepository.findOne({
+      where: { name: roleName, scope: role_scape },
+    });
+    if (!role) {
+      throw new ConflictException('Role not found');
+    }
+    return role;
+  }
+  private async generateAndSaveTokens(
     userId: string,
     userRole: string,
     deviceId: string,
@@ -165,21 +228,6 @@ export class AuthService {
 
   private async isEmailNotExistOrThrow(email: string): Promise<void> {
     const user = await this.usersRepository.findOneBy({ email });
-    // let user;
-    //
-    // switch (role) {
-    //   case 'admin':
-    //     user = await this.adminRepository.findOneBy({ email });
-    //     break;
-    //   case 'seller':
-    //     user = await this.sellersRepository.findOneBy({ email });
-    //     break;
-    //   case 'buyer':
-    //     user = await this.buyersRepository.findOneBy({ email });
-    //     break;
-    //   default:
-    //     break;
-    // }
     if (user) {
       throw new ConflictException('Email already exists');
     }
