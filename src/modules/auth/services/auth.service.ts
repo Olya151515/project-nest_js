@@ -176,11 +176,11 @@ export class AuthService {
     );
   }
 
-  private async saveUser(
+  public async saveUser(
     user: EntitiesALl,
     password: string,
     role: RoleEntity,
-  ): Promise<any> {
+  ): Promise<void> {
     await this.usersRepository.save(
       this.usersRepository.create({
         email: user.entity.email,
@@ -190,7 +190,7 @@ export class AuthService {
       }),
     );
   }
-  private async checkRoleExist(
+  public async checkRoleExist(
     roleName: string,
     role_scape: string,
   ): Promise<RoleEntity> {
@@ -202,7 +202,7 @@ export class AuthService {
     }
     return role;
   }
-  private async generateAndSaveTokens(
+  public async generateAndSaveTokens(
     userId: string,
     userRole: string,
     deviceId: string,
@@ -226,7 +226,7 @@ export class AuthService {
     return tokens;
   }
 
-  private async isEmailNotExistOrThrow(email: string): Promise<void> {
+  public async isEmailNotExistOrThrow(email: string): Promise<void> {
     const user = await this.usersRepository.findOneBy({ email });
     if (user) {
       throw new ConflictException('Email already exists');

@@ -43,13 +43,4 @@ export class SellerEntity extends BaseUserModel {
   })
   @JoinColumn({ name: 'manager_id' })
   bannedBy?: ManagerEntity;
-
-  // @Column()
-  // role_name: string;
-
-  // @Column()
-  // role_id: string;
-  // @ManyToOne(() => RoleEntity, (role) => role.id)
-  // @JoinColumn({ name: 'role_id' })
-  // role: RoleEntity;
 }

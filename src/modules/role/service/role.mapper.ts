@@ -1,4 +1,5 @@
 import { RoleEntity } from '../../../database/entities/role.entity';
+import { AdminMapper } from '../../admin/services/admin.mapper';
 import { RoleResDto } from '../models/dto/res/role/role.res.dto';
 
 export class RoleMapper {
@@ -10,7 +11,7 @@ export class RoleMapper {
       permissions: role.permissions
         ? role.permissions.map((permission) => permission)
         : [],
-      admin_id: role.admin_id || null,
+      createdBy: role.createdBy ? AdminMapper.toResDto(role.createdBy) : null,
     };
   }
 }

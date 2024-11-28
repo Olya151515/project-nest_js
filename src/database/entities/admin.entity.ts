@@ -48,11 +48,4 @@ export class AdminEntity {
 
   @OneToMany(() => ManagerEntity, (manager) => manager.createdBy)
   createdManagers?: ManagerEntity[];
-  //
-  // @Column()
-  // role_id: RoleID;
-  // @ManyToOne(() => RoleEntity)
-  // @JoinColumn({ name: 'role_id' })
-  // @Column({ default: 'admin' })
-  // role: string;
 }

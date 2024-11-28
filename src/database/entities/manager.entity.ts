@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -28,12 +29,9 @@ export class ManagerEntity extends BaseUserModel {
   })
   bannedSellers?: SellerEntity[];
 
+  @Column()
+  admin_id: string;
   @ManyToOne(() => AdminEntity, (admin) => admin.createdManagers)
+  @JoinColumn({ name: 'admin_id' })
   createdBy?: AdminEntity;
-
-  // @Column()
-  // role_id: RoleID;
-  // @ManyToOne(() => RoleEntity, (role) => role.id)
-  // @JoinColumn({ name: 'role_id' })
-  // role: RoleEntity;
 }

@@ -8,4 +8,6 @@ export enum TableNameEnum {
   PERMISSION = 'permissions',
   ADVERTISEMENT = 'advertisement',
   USERS = 'users',
+  CAR_BRANDS = 'car-brands',
+  CAR_MODELS = 'car-models',
 }

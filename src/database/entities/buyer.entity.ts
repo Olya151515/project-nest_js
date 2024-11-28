@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { ManagerID } from '../../common/types/entity-ids.type';
 import { AdvertisementEntity } from './advertisement.entity';
 import { TableNameEnum } from './enums/table-name.enum';
 import { ManagerEntity } from './manager.entity';

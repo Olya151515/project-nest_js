@@ -11,11 +11,6 @@ export class BaseAuthReqDto extends PickType(BaseUserReqDto, [
   'role',
   'role_scope',
 ]) {
-  //   @IsString()
-  //   @ApiProperty({
-  //     enum: RoleEnum,
-  //   })
-  //   role: string;
   @IsNotEmpty()
   @IsString()
   readonly deviceId: string; // щоб привязувати tokens до конкретного device , щоб потім ідентифікувати девайси

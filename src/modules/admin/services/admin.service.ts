@@ -1,156 +1,93 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager, In } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { EntityManager } from 'typeorm';
 
-import { PermissionEntity } from '../../../database/entities/permissions.entity';
-import { RoleEntity } from '../../../database/entities/role.entity';
+import { ManagerEntity } from '../../../database/entities/manager.entity';
+import { UsersEntity } from '../../../database/entities/users.entity';
 import { IUserData } from '../../auth/models/interfaces/user-data';
+import { AuthService } from '../../auth/services/auth.service';
+import { BaseManagerReqDto } from '../../manager/models/dto/req/manager/base-manager.req.dto';
+import { AllManagersResDto } from '../../manager/models/dto/res/manager/all-managers.res.dto';
+import { BaseManagerResDto } from '../../manager/models/dto/res/manager/base-manager.res.dto';
+import { ManagerMapper } from '../../manager/services/manager.mapper';
 import { AdminRepository } from '../../repository/services/admin.repository';
-import { PermissionRepository } from '../../repository/services/permission.repository';
-import { RoleRepository } from '../../repository/services/role.repository';
-import { RoleReqDto } from '../models/dto/req/role/role.req.dto';
-import { UpdateRoleReqDto } from '../models/dto/req/role/update-role.req.dto';
-import { PermissionResDto } from '../models/dto/res/permissions/permission-res.dto';
-import { RoleResDto } from '../models/dto/res/role/role.res.dto';
-import { RoleMapper } from './role.mapper';
+import { ManagersRepository } from '../../repository/services/managers.repository';
 
 @Injectable()
 export class AdminService {
   constructor(
-    private readonly roleRepository: RoleRepository,
     private readonly adminRepository: AdminRepository,
-    private readonly permissionRepository: PermissionRepository,
+    private readonly managerRepository: ManagersRepository,
+    private readonly authService: AuthService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
-  public async createRole(
-    dto: RoleReqDto,
-    userData: IUserData,
-  ): Promise<RoleEntity> {
-    return await this.entityManager.transaction(async (manager) => {
-      const roleRepository = manager.getRepository(RoleEntity);
-
-      const permissions = await this.createPermissions(
-        dto.permissions,
-        userData,
-        manager,
-      );
-      const existRole = await roleRepository.findOneBy({ name: dto.name });
-      if (existRole) {
-        throw new ConflictException('Role is already exists');
-      }
-      return await roleRepository.save(
-        roleRepository.create({
-          ...dto,
-          permissions,
-          admin_id: userData.user_id,
-        }),
-      );
-    });
+  public async getAll(userData: IUserData): Promise<AllManagersResDto[]> {
+    const managers = await this.managerRepository.findAll(userData);
+    return managers.map((manager) => ManagerMapper.toAllResDto(manager));
   }
 
-  public async getAllRoles(userData: IUserData): Promise<RoleResDto[]> {
+  public async createManager(
+    userData: IUserData,
+    dto: BaseManagerReqDto,
+  ): Promise<BaseManagerResDto> {
+    await this.authService.isEmailNotExistOrThrow(dto.email);
+    const role = await this.authService.checkRoleExist(
+      dto.role,
+      dto.role_scope,
+    );
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+
     const admin = await this.adminRepository.findOneBy({
-      email: userData.email,
+      id: userData.user_id,
+    });
+    const manager = await this.managerRepository.save(
+      this.managerRepository.create({
+        ...dto,
+        role: dto.role,
+        password: passwordHash,
+        createdBy: admin,
+        admin_id: admin.id,
+      }),
+    );
+
+    await this.authService.saveUser({ entity: manager }, passwordHash, role);
+    await this.authService.generateAndSaveTokens(
+      manager.id,
+      manager.role,
+      dto.deviceId,
+    );
+
+    return ManagerMapper.toResDto(manager);
+  }
+
+  public async deleteManager(
+    userData: IUserData,
+    managerId: string,
+  ): Promise<void> {
+    const admin = await this.adminRepository.findOneBy({
+      id: userData.user_id,
     });
     if (!admin) {
-      throw new ConflictException('You are not admin');
+      throw new ConflictException('Admin not found');
     }
-    const roles = await this.roleRepository.findAll(userData);
-    if (roles.length === 0) {
-      throw new ConflictException('You do not create any roles');
+    const manager = await this.managerRepository.findOneBy({ id: managerId });
+    if (!manager) {
+      throw new ConflictException('Manager does not exist');
     }
-    return roles.map((role) => RoleMapper.toResDto(role));
-  }
-
-  public async deleteRole(roleId: string, userData: IUserData): Promise<void> {
-    const role = await this.roleRepository.findOneBy({ id: roleId });
-    if (!role) {
-      throw new ConflictException('Role does not exist');
-    }
-    const isAdmin = role.admin_id === userData.user_id;
-    if (!isAdmin) {
+    if (admin?.id !== manager?.admin_id) {
       throw new ConflictException(
-        'You can not delete this role , because  you do not create that ',
+        'You can not delete , you do not create that manager',
       );
     }
-    await this.roleRepository.delete({ id: roleId });
-  }
-  public async updateRole(
-    userData: IUserData,
-    roleId: string,
-    updateDto: UpdateRoleReqDto,
-  ): Promise<RoleResDto> {
-    const role = await this.roleRepository.findOneBy({ id: roleId });
-
-    if (!role) {
-      throw new ConflictException('Role does not exist');
-    }
-    if (!(role.admin_id === userData.user_id)) {
-      throw new ConflictException(
-        'You can not update this role , because you do not create that',
-      );
-    }
-    let permissions: PermissionEntity[] = [];
-    if (updateDto.permissions) {
-      permissions = await this.createPermissions(
-        updateDto.permissions,
-        userData,
-      );
-    }
-    this.roleRepository.merge(role, { ...updateDto, permissions });
-    await this.roleRepository.save(role);
-
-    return RoleMapper.toResDto(role);
-  }
-
-  public async getPermissions(): Promise<PermissionResDto[]> {
-    return await this.permissionRepository.findAll();
-  }
-
-  public async deletePermission(
-    permissionId: string,
-    userData: IUserData,
-  ): Promise<void> {
-    const permission = await this.permissionRepository.findOneBy({
-      id: permissionId,
+    await this.entityManager.transaction(async (em) => {
+      const managerRepository = em.getRepository(ManagerEntity);
+      const usersRepository = em.getRepository(UsersEntity);
+      await Promise.any([
+        await managerRepository.delete(manager.id),
+        await usersRepository.delete({ user_id: manager.id }),
+      ]);
     });
-    if (!permission) {
-      throw new ConflictException('Permission does not exist');
-    }
-
-    if (!(permission.admin_id === userData.user_id)) {
-      throw new ConflictException(
-        'You can not delete this permission , because you do not create that',
-      );
-    }
-
-    await this.permissionRepository.remove(permission);
-  }
-  public async createPermissions(
-    permissions: string[],
-    userData: IUserData,
-    manager?: EntityManager,
-  ): Promise<PermissionEntity[]> {
-    if (!permissions || !permissions.length) return [];
-    const repo = manager
-      ? manager.getRepository(PermissionEntity)
-      : this.permissionRepository;
-    const entities = await repo.findBy({
-      action: In(permissions),
-    });
-    const existingPermission = entities.map((permission) => permission.action);
-    const newPermissions = permissions.filter(
-      (permission) => !existingPermission.includes(permission),
-    );
-    const newEntities = await repo.save(
-      newPermissions.map((permission) =>
-        repo.create({
-          action: permission,
-          admin_id: userData.user_id,
-        }),
-      ),
-    );
-    return [...entities, ...newEntities];
   }
 }

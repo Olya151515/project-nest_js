@@ -3,6 +3,8 @@ import { Global, Module } from '@nestjs/common';
 import { AdminRepository } from './services/admin.repository';
 import { AdvertisementRepository } from './services/advertisement.repository';
 import { BuyersRepository } from './services/buyers.repository';
+import { CarBrandsRepository } from './services/car-brands.repository';
+import { CarModelsRepository } from './services/car-models.repository';
 import { ManagersRepository } from './services/managers.repository';
 import { PermissionRepository } from './services/permission.repository';
 import { RefreshTokenRepository } from './services/refresh-token.repository';
@@ -20,6 +22,8 @@ const repositories = [
   RoleRepository,
   SellersRepository,
   UsersRepository,
+  CarBrandsRepository,
+  CarModelsRepository,
 ];
 @Global()
 @Module({
