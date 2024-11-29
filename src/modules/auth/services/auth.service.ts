@@ -57,7 +57,7 @@ export class AuthService {
       user.role,
       dto.deviceId,
     );
-    return { user: AdminMapper.toResDto(user), tokens };
+    return { user: AdminMapper.toBaseResDto(user), tokens };
   }
 
   public async signUpSeller(dto: SignUpSellerReqDto): Promise<AuthResDto> {

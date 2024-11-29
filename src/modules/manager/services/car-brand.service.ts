@@ -8,6 +8,7 @@ import { CarBrandsRepository } from '../../repository/services/car-brands.reposi
 import { CarModelsRepository } from '../../repository/services/car-models.repository';
 import { BrandReqDto } from '../models/dto/req/brand/brand.req.dto';
 import { ModelReqDto } from '../models/dto/req/brand/model.req.dto';
+import { UpdateBrandReqDto } from '../models/dto/req/brand/update.brand.req.dto';
 import { BrandResDto } from '../models/dto/res/brand/brand.res.dto';
 import { BrandMapper } from './brand.mapper';
 
@@ -18,11 +19,11 @@ export class CarBrandService {
     private readonly modelRepository: CarModelsRepository,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
-  public async createBrand(dto: BrandReqDto): Promise<BrandResDto> {
+  public async createBrand(dto: BrandReqDto): Promise<CarBrandsEntity> {
     return await this.entityManager.transaction(async (manager) => {
       const brandRepository = manager.getRepository(CarBrandsEntity);
       //const models = dto.models.map((model) => model.name);
-      const models = await this.createModels(dto.models, manager);
+      const models = await this.createModels(dto.models, null, manager);
       const brandExist = await brandRepository.findOneBy({ name: dto.name });
       if (brandExist) {
         throw new ConflictException('Brand is already exist');
@@ -42,6 +43,22 @@ export class CarBrandService {
     return brands.map((brand) => BrandMapper.toBrandResDto(brand));
   }
 
+  public async updateBrand(
+    brandId: string,
+    dto: UpdateBrandReqDto,
+  ): Promise<BrandResDto> {
+    const brand = await this.brandRepository.findOneBy({ id: brandId });
+    if (!brand) {
+      throw new ConflictException('Brand does not exist');
+    }
+
+    const models = await this.createModels(dto.models, brand);
+
+    this.brandRepository.merge(brand, { ...dto, models });
+    const newBrand = await this.brandRepository.save(brand);
+    return BrandMapper.toBrandResDto(newBrand);
+  }
+
   public async deleteBrand(brandId: string): Promise<void> {
     const brand = await this.brandRepository.findOneBy({ id: brandId });
     if (!brand) {
@@ -52,6 +69,7 @@ export class CarBrandService {
 
   private async createModels(
     models: ModelReqDto[],
+    brand?: CarBrandsEntity,
     manager?: EntityManager,
   ): Promise<CarModelEntity[]> {
     if (!models || !models.length) return [];
@@ -60,7 +78,7 @@ export class CarBrandService {
       : this.modelRepository;
 
     const entities = await repo.findBy({
-      name: In(models),
+      name: In(models.map((model) => model.name)),
     });
     const existingModels = entities.map((models) => models.name);
     const newModels = models.filter(
@@ -72,6 +90,7 @@ export class CarBrandService {
         repo.create({
           name: models.name,
           year: models.year,
+          brand: brand,
         }),
       ),
     );

@@ -9,7 +9,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { AdvertisementID, SellerID } from '../../common/types/entity-ids.type';
 import { BuyerEntity } from './buyer.entity';
 import { TableNameEnum } from './enums/table-name.enum';
 import { SellerEntity } from './seller.entity';
@@ -44,11 +43,13 @@ export class AdvertisementEntity {
   updatedAt: Date;
 
   @Column()
-  seller_id: SellerID;
+  seller_id: string;
   @ManyToOne(() => SellerEntity, (seller) => seller.advertisements)
   @JoinColumn({ name: 'seller_id' })
   seller: SellerEntity;
 
-  @ManyToMany(() => BuyerEntity, (buyer) => buyer.favoriteAds)
+  @ManyToMany(() => BuyerEntity, (buyer) => buyer.favoriteAds, {
+    onDelete: 'CASCADE',
+  })
   favoriteBuyers: BuyerEntity[];
 }

@@ -35,7 +35,9 @@ export class BuyerEntity extends BaseUserModel {
   @JoinColumn({ name: 'manager_id' })
   bannedBy: ManagerEntity;
 
-  @ManyToMany(() => AdvertisementEntity, (ad) => ad.favoriteBuyers)
+  @ManyToMany(() => AdvertisementEntity, (ad) => ad.favoriteBuyers, {
+    onDelete: 'CASCADE',
+  })
   @JoinTable()
   favoriteAds: AdvertisementEntity[];
 }

@@ -1,11 +1,13 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class ModelReqDto {
+  @IsOptional()
   @IsString()
-  name: string;
+  name?: string;
 
+  @IsOptional()
   @IsNumber()
-  year: number;
+  year?: number;
 
   // @IsString()
   // brand: string;

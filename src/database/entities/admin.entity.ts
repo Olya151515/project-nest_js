@@ -16,6 +16,7 @@ import { RoleEntity } from './role.entity';
 export class AdminEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @Column()
   name: string;
 

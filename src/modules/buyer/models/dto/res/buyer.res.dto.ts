@@ -1,5 +1,5 @@
-import { AdvertisementEntity } from '../../../../../database/entities/advertisement.entity';
-import { ManagerEntity } from '../../../../../database/entities/manager.entity';
+import { BaseAdsResDto } from '../../../../advertisement/models/dto/res/base-ads.res.dto';
+import { BaseManagerResDto } from '../../../../manager/models/dto/res/manager/base-manager.res.dto';
 
 export class BuyerResDto {
   id: string;
@@ -11,6 +11,6 @@ export class BuyerResDto {
   region: string;
   isBanned: boolean;
   banReason: string;
-  bannedBy: ManagerEntity;
-  favoriteAds: AdvertisementEntity[];
+  bannedBy: BaseManagerResDto;
+  favoriteAds: BaseAdsResDto[];
 }

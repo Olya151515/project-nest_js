@@ -1,10 +1,11 @@
 import { ManagerEntity } from '../../../database/entities/manager.entity';
 import { AdminMapper } from '../../admin/services/admin.mapper';
-import { AllManagersResDto } from '../models/dto/res/manager/all-managers.res.dto';
+import { BuyerMapper } from '../../buyer/service/buyer.mapper';
 import { BaseManagerResDto } from '../models/dto/res/manager/base-manager.res.dto';
+import { ManagerResDto } from '../models/dto/res/manager/manager.res.dto';
 
 export class ManagerMapper {
-  public static toResDto(manager: ManagerEntity): BaseManagerResDto {
+  public static toBaseResDto(manager: ManagerEntity): BaseManagerResDto {
     return {
       id: manager.id,
       name: manager.name,
@@ -13,12 +14,9 @@ export class ManagerMapper {
       role: manager.role,
       role_scope: manager.role_scope,
       department: manager.department,
-      createdBy: manager.createdBy
-        ? AdminMapper.toResDto(manager.createdBy)
-        : null,
     };
   }
-  public static toAllResDto(manager: ManagerEntity): AllManagersResDto {
+  public static toResDto(manager: ManagerEntity): ManagerResDto {
     return {
       id: manager.id,
       name: manager.name,
@@ -28,9 +26,13 @@ export class ManagerMapper {
       role_scope: manager.role_scope,
       department: manager.department,
       createdBy: manager.createdBy
-        ? AdminMapper.toResDto(manager.createdBy)
+        ? AdminMapper.toBaseResDto(manager.createdBy)
         : null,
-      bannedBuyers: manager.bannedBuyers ? [] : null,
+      bannedBuyers: manager.bannedBuyers
+        ? manager.bannedBuyers.map((buyer) =>
+            BuyerMapper.toShortBuyerResDto(buyer),
+          )
+        : [],
       bannedSellers: manager.bannedSellers ? [] : null,
     };
   }

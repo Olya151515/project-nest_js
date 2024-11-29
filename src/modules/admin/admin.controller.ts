@@ -1,20 +1,11 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, Patch } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../auth/decorators/current-user-decorator';
 import { IUserData } from '../auth/models/interfaces/user-data';
-import { BaseManagerReqDto } from '../manager/models/dto/req/manager/base-manager.req.dto';
-import { AllManagersResDto } from '../manager/models/dto/res/manager/all-managers.res.dto';
-import { BaseManagerResDto } from '../manager/models/dto/res/manager/base-manager.res.dto';
+import { UpdateAdminReqDto } from './models/dto/req/update-admin.req.dto';
+import { AdminResDto } from './models/dto/res/admin.res.dto';
+import { BaseAdminResDto } from './models/dto/res/base-admin.res.dto';
 import { AdminService } from './services/admin.service';
 
 @ApiBearerAuth()
@@ -23,24 +14,16 @@ import { AdminService } from './services/admin.service';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  @Get('managers')
-  public async getAllManagers(
-    @CurrentUser() userData: IUserData,
-  ): Promise<AllManagersResDto[]> {
-    return await this.adminService.getAll(userData);
+  @Get('me')
+  public async getMe(@CurrentUser() userData: IUserData): Promise<AdminResDto> {
+    return await this.adminService.getMe(userData);
   }
-  @Post('manager')
-  public async createManager(
+
+  @Patch('me')
+  public async updateMe(
     @CurrentUser() userData: IUserData,
-    @Body() dto: BaseManagerReqDto,
-  ): Promise<BaseManagerResDto> {
-    return await this.adminService.createManager(userData, dto);
-  }
-  @Delete(':managerId')
-  public async deleteManager(
-    @CurrentUser() userData: IUserData,
-    @Param('managerId', ParseUUIDPipe) managerId: string,
-  ): Promise<void> {
-    return await this.adminService.deleteManager(userData, managerId);
+    @Body() dto: UpdateAdminReqDto,
+  ): Promise<BaseAdminResDto> {
+    return await this.adminService.updateMe(userData, dto);
   }
 }

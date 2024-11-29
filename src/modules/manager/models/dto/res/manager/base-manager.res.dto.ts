@@ -1,5 +1,3 @@
-import { BaseAdminResDto } from '../../../../../admin/models/dto/res/base-admin.res.dto';
-
 export class BaseManagerResDto {
   id: string;
   name: string;
@@ -8,5 +6,4 @@ export class BaseManagerResDto {
   role: string;
   role_scope: string;
   department: string;
-  createdBy: BaseAdminResDto;
 }

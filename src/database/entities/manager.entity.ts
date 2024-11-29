@@ -33,5 +33,5 @@ export class ManagerEntity extends BaseUserModel {
   admin_id: string;
   @ManyToOne(() => AdminEntity, (admin) => admin.createdManagers)
   @JoinColumn({ name: 'admin_id' })
-  createdBy?: AdminEntity;
+  createdBy: AdminEntity;
 }

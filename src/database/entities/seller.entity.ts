@@ -28,10 +28,10 @@ export class SellerEntity extends BaseUserModel {
   region: string;
 
   @Column({ default: false })
-  isBanned?: boolean;
+  isBanned: boolean;
 
   @Column({ nullable: true })
-  banReason?: string;
+  banReason: string;
 
   @OneToMany(() => AdvertisementEntity, (ad) => ad.seller)
   advertisements?: AdvertisementEntity[];

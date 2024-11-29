@@ -94,13 +94,10 @@ export class RoleService {
         'You can not update this role , because you do not create that',
       );
     }
-    let permissions: PermissionEntity[] = [];
-    if (updateDto.permissions) {
-      permissions = await this.createPermissions(
-        updateDto.permissions,
-        userData,
-      );
-    }
+    const permissions = await this.createPermissions(
+      updateDto.permissions,
+      userData,
+    );
     this.roleRepository.merge(role, { ...updateDto, permissions });
     await this.roleRepository.save(role);
 
