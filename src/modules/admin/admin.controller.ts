@@ -25,5 +25,6 @@ export class AdminController {
     @Body() dto: UpdateAdminReqDto,
   ): Promise<BaseAdminResDto> {
     return await this.adminService.updateMe(userData, dto);
+    console.log(dto);
   }
 }
