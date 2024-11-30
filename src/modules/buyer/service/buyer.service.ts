@@ -117,6 +117,6 @@ export class BuyerService {
       isBanned: true,
       bannedBy: manager,
     });
-    const updatedBuyer = await this.buyerRepository.save(buyer);
+    await this.buyerRepository.save(buyer);
   }
 }

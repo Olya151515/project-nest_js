@@ -5,11 +5,14 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { BuyerEntity } from './buyer.entity';
+import { CarImageEntity } from './car-image.entity';
+import { AddStatusEnum } from './enums/add-status.enum';
 import { TableNameEnum } from './enums/table-name.enum';
 import { SellerEntity } from './seller.entity';
 
@@ -33,8 +36,11 @@ export class AdvertisementEntity {
   @Column('decimal', { precision: 10, scale: 3 })
   price: number;
 
-  @Column()
+  @Column({ default: AddStatusEnum.INACTIVE })
   status: string;
+
+  @Column({ default: 0 })
+  editAttempts: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -52,4 +58,7 @@ export class AdvertisementEntity {
     onDelete: 'CASCADE',
   })
   favoriteBuyers: BuyerEntity[];
+
+  @OneToMany(() => CarImageEntity, (image) => image.advertisement)
+  images?: CarImageEntity[];
 }

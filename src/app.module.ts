@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import configuration from './configs/configuration';
 import { AdminModule } from './modules/admin/admin.module';
@@ -19,6 +20,7 @@ import { SellerModule } from './modules/seller(user)/seller.module';
       load: [configuration],
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     RepositoryModule,
     AuthModule,
     AdvertisementModule,

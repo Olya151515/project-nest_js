@@ -7,9 +7,5 @@ export class UpdateAdminReqDto {
 
   @IsOptional()
   @IsString()
-  email?: string;
-
-  @IsOptional()
-  @IsString()
   phone?: string;
 }

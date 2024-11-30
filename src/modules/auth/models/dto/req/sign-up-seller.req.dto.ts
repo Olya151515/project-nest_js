@@ -1,5 +1,5 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 
 import { AccountEnum } from '../../../../../database/entities/enums/account-enum';
 import { RoleEnum } from '../../../../../database/entities/enums/role-enum';
@@ -20,6 +20,7 @@ export class SignUpSellerReqDto extends PickType(BaseAuthReqDto, [
     example: 'base',
   })
   @IsString()
+  @IsEnum(AccountEnum)
   accountType: string;
 
   @IsString()
@@ -28,13 +29,3 @@ export class SignUpSellerReqDto extends PickType(BaseAuthReqDto, [
   @IsString()
   region: string;
 }
-
-// export class SignUpSeller {
-//   name: string;
-//   email: string;
-//   password: string;
-//   phone: string;
-//   accountType: string;
-//   shopName: string;
-//   region: string;
-// }

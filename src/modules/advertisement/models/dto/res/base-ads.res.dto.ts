@@ -5,4 +5,5 @@ export class BaseAdsResDto {
   location: string;
   price: number;
   status: string;
+  images: string[] | null;
 }

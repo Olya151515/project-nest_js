@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+import { AccountEnum } from '../../../database/entities/enums/account-enum';
 import { EntitiesALl } from '../../../database/entities/enums/entities.enum';
 import { RoleEntity } from '../../../database/entities/role.entity';
 import { AdminMapper } from '../../admin/services/admin.mapper';
@@ -61,6 +62,7 @@ export class AuthService {
   }
 
   public async signUpSeller(dto: SignUpSellerReqDto): Promise<AuthResDto> {
+    const now = new Date();
     await this.isEmailNotExistOrThrow(dto.email);
     const role = await this.checkRoleExist(dto.role, dto.role_scope);
     const passwordHash = await bcrypt.hash(dto.password, 10);
@@ -70,6 +72,10 @@ export class AuthService {
         ...dto,
         role: dto.role,
         password: passwordHash,
+        premiumExpiry:
+          dto.accountType === AccountEnum.PREMIUM
+            ? new Date(now.setMonth(now.getMonth() + 1))
+            : null,
       }),
     );
 

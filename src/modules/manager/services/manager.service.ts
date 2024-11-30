@@ -14,6 +14,7 @@ import { AuthService } from '../../auth/services/auth.service';
 import { AdminRepository } from '../../repository/services/admin.repository';
 import { ManagersRepository } from '../../repository/services/managers.repository';
 import { BaseManagerReqDto } from '../models/dto/req/manager/base-manager.req.dto';
+import { UpdateManagerReqDto } from '../models/dto/req/manager/update-manager.req.dto';
 import { BaseManagerResDto } from '../models/dto/res/manager/base-manager.res.dto';
 import { ManagerMapper } from './manager.mapper';
 
@@ -27,9 +28,7 @@ export class ManagerService {
   ) {}
 
   public async getMe(userData: IUserData): Promise<ManagerEntity> {
-    const manager = await this.managerRepository.findMe(userData.user_id);
-    console.log(manager);
-    return manager;
+    return await this.managerRepository.findMe(userData.user_id);
   }
 
   public async getAll(userData: IUserData): Promise<BaseManagerResDto[]> {
@@ -81,6 +80,21 @@ export class ManagerService {
     );
 
     return ManagerMapper.toBaseResDto(manager);
+  }
+
+  public async updateMe(
+    userData: IUserData,
+    dto: UpdateManagerReqDto,
+  ): Promise<BaseManagerResDto> {
+    const manager = await this.managerRepository.findOneBy({
+      id: userData.user_id,
+    });
+    if (!manager) {
+      throw new ConflictException('Manager does not exist');
+    }
+    this.managerRepository.merge(manager, { ...dto });
+    const updatedManager = await this.managerRepository.save(manager);
+    return ManagerMapper.toBaseResDto(updatedManager);
   }
 
   public async deleteManager(

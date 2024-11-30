@@ -27,6 +27,7 @@ export class BaseUserReqDto {
   password: string;
 
   @IsString()
+  @IsOptional()
   @Length(0, 10)
   phone?: string;
 

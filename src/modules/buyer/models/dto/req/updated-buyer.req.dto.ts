@@ -5,9 +5,6 @@ export class UpdatedBuyerReqDto {
   name: string;
 
   @IsOptional()
-  email: string;
-
-  @IsOptional()
   phone: string;
 
   @IsOptional()

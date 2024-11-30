@@ -21,6 +21,9 @@ export class SellerEntity extends BaseUserModel {
   @Column({ default: AccountEnum.BASE })
   accountType: string;
 
+  @Column({ nullable: true })
+  premiumExpiry: Date | null;
+
   @Column()
   shopName: string;
 
