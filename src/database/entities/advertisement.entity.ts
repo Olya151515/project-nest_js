@@ -11,7 +11,9 @@ import {
 } from 'typeorm';
 
 import { BuyerEntity } from './buyer.entity';
+import { CarBrandsEntity } from './car-brands.entity';
 import { CarImageEntity } from './car-image.entity';
+import { CarModelEntity } from './car-model.entity';
 import { AddStatusEnum } from './enums/add-status.enum';
 import { TableNameEnum } from './enums/table-name.enum';
 import { SellerEntity } from './seller.entity';
@@ -61,4 +63,18 @@ export class AdvertisementEntity {
 
   @OneToMany(() => CarImageEntity, (image) => image.advertisement)
   images?: CarImageEntity[];
+
+  @ManyToOne(() => CarBrandsEntity, (brand) => brand.id, {
+    nullable: false,
+    eager: true,
+  })
+  @JoinColumn({ name: 'brand_id' })
+  brand: CarBrandsEntity;
+
+  @ManyToOne(() => CarModelEntity, (model) => model.id, {
+    nullable: false,
+    eager: true,
+  })
+  @JoinColumn({ name: 'model_id' })
+  model: CarModelEntity;
 }

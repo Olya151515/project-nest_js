@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+import { Roles } from '../../common/decorators/role-decorator';
+import { RoleEnum } from '../../database/entities/enums/role-enum';
 import { CurrentUser } from '../auth/decorators/current-user-decorator';
 import { IUserData } from '../auth/models/interfaces/user-data';
 import { RoleReqDto } from './models/dto/req/role/role.req.dto';
@@ -23,6 +25,8 @@ import { RoleService } from './service/role.service';
 @Controller('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
+
+  @Roles([RoleEnum.ADMIN])
   @Post('role')
   public async createRole(
     @CurrentUser() userData: IUserData,
@@ -32,6 +36,7 @@ export class RoleController {
     return RoleMapper.toResDto(result);
   }
 
+  @Roles([RoleEnum.ADMIN])
   @Get('role')
   public async getAllRole(
     @CurrentUser() userData: IUserData,
@@ -39,6 +44,7 @@ export class RoleController {
     return await this.roleService.getAllRoles(userData);
   }
 
+  @Roles([RoleEnum.ADMIN])
   @Delete(':roleId')
   public async deleteRole(
     @CurrentUser() userData: IUserData,
@@ -47,6 +53,7 @@ export class RoleController {
     return await this.roleService.deleteRole(roleId, userData);
   }
 
+  @Roles([RoleEnum.ADMIN])
   @Patch(':roleId')
   public async updateRole(
     @CurrentUser() userData: IUserData,

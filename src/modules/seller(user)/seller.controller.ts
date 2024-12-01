@@ -9,7 +9,9 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+import { Roles } from '../../common/decorators/role-decorator';
 import { AccountEnum } from '../../database/entities/enums/account-enum';
+import { RoleEnum } from '../../database/entities/enums/role-enum';
 import { CurrentUser } from '../auth/decorators/current-user-decorator';
 import { IUserData } from '../auth/models/interfaces/user-data';
 import { UserBanReqDto } from '../buyer/models/dto/req/user-ban.req.dto';
@@ -23,6 +25,7 @@ import { SellerService } from './services/seller.service';
 @Controller('seller')
 export class SellerController {
   constructor(private readonly sellerService: SellerService) {}
+  @Roles([RoleEnum.SELLER])
   @Get('me')
   public async getMe(
     @CurrentUser() usersData: IUserData,
@@ -30,6 +33,7 @@ export class SellerController {
     return await this.sellerService.getMe(usersData);
   }
 
+  @Roles([RoleEnum.SELLER])
   @Post('changeAccountType')
   public async changeAccountTYpe(
     @CurrentUser() userData: IUserData,
@@ -43,6 +47,7 @@ export class SellerController {
     );
   }
 
+  @Roles([RoleEnum.SELLER])
   @Patch('me')
   public async updateMe(
     @CurrentUser() userData: IUserData,
@@ -51,6 +56,7 @@ export class SellerController {
     return await this.sellerService.updateMe(userData, dto);
   }
 
+  @Roles([RoleEnum.MANAGER])
   @Delete(':sellerId')
   public async blockSeller(
     @CurrentUser() useData: IUserData,

@@ -36,7 +36,7 @@ export class SellerMapper {
         ? ManagerMapper.toBaseResDto(seller.bannedBy)
         : null,
       advertisements: seller.advertisements
-        ? seller.advertisements.map((add) => AddMapper.toBaseResDto(add))
+        ? seller.advertisements.map((add) => AddMapper.toShortResDto(add))
         : null,
     };
   }

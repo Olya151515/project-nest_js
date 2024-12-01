@@ -1,4 +1,5 @@
 import { BaseAdsResDto } from '../../../../advertisement/models/dto/res/base-ads.res.dto';
+import { ShortAddResDto } from '../../../../advertisement/models/dto/res/short-add.res.dto';
 import { BaseManagerResDto } from '../../../../manager/models/dto/res/manager/base-manager.res.dto';
 
 export class BuyerResDto {
@@ -12,5 +13,5 @@ export class BuyerResDto {
   isBanned: boolean;
   banReason: string;
   bannedBy: BaseManagerResDto;
-  favoriteAds: BaseAdsResDto[];
+  favoriteAds: ShortAddResDto[];
 }

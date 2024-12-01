@@ -1,6 +1,7 @@
 import { ManagerEntity } from '../../../database/entities/manager.entity';
 import { AdminMapper } from '../../admin/services/admin.mapper';
 import { BuyerMapper } from '../../buyer/service/buyer.mapper';
+import { SellerMapper } from '../../seller(user)/services/seller.mapper';
 import { BaseManagerResDto } from '../models/dto/res/manager/base-manager.res.dto';
 import { ManagerResDto } from '../models/dto/res/manager/manager.res.dto';
 
@@ -33,7 +34,11 @@ export class ManagerMapper {
             BuyerMapper.toShortBuyerResDto(buyer),
           )
         : [],
-      bannedSellers: manager.bannedSellers ? [] : null,
+      bannedSellers: manager.bannedSellers
+        ? manager.bannedSellers.map((seller) =>
+            SellerMapper.toBaseSellerResDto(seller),
+          )
+        : null,
     };
   }
 }

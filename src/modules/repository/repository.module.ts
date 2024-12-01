@@ -4,6 +4,7 @@ import { AdminRepository } from './services/admin.repository';
 import { AdvertisementRepository } from './services/advertisement.repository';
 import { BuyersRepository } from './services/buyers.repository';
 import { CarBrandsRepository } from './services/car-brands.repository';
+import { CarImageRepository } from './services/car-image.repository';
 import { CarModelsRepository } from './services/car-models.repository';
 import { ManagersRepository } from './services/managers.repository';
 import { PermissionRepository } from './services/permission.repository';
@@ -24,6 +25,7 @@ const repositories = [
   UsersRepository,
   CarBrandsRepository,
   CarModelsRepository,
+  CarImageRepository,
 ];
 @Global()
 @Module({

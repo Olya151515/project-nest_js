@@ -22,6 +22,7 @@ export class AuthController {
   public async signUpAdmin(@Body() dto: SignUpReqDto): Promise<AuthResDto> {
     return await this.authService.signUpAdmin(dto);
   }
+
   @SkipAuth()
   @Post('sign-up-seller')
   public async signUpSeller(
@@ -29,6 +30,7 @@ export class AuthController {
   ): Promise<AuthResDto> {
     return await this.authService.signUpSeller(dto);
   }
+
   @SkipAuth()
   @Post('sign-up-buyer')
   public async signUpBuyer(
@@ -42,6 +44,7 @@ export class AuthController {
   public async signIn(@Body() dto: SignInReqDto): Promise<AuthResDto> {
     return await this.authService.signIn(dto);
   }
+
   @ApiBearerAuth()
   @Post('sign-out')
   public async signOut(@CurrentUser() userData: IUserData): Promise<void> {

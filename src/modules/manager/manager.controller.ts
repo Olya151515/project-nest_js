@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+import { Roles } from '../../common/decorators/role-decorator';
+import { RoleEnum } from '../../database/entities/enums/role-enum';
 import { CurrentUser } from '../auth/decorators/current-user-decorator';
 import { IUserData } from '../auth/models/interfaces/user-data';
 import { BaseManagerReqDto } from './models/dto/req/manager/base-manager.req.dto';
@@ -24,6 +26,7 @@ import { ManagerService } from './services/manager.service';
 @Controller('manager')
 export class ManagerController {
   constructor(private readonly managerService: ManagerService) {}
+  @Roles([RoleEnum.MANAGER])
   @Get('me')
   public async getManager(
     @CurrentUser() userData: IUserData,
@@ -32,6 +35,7 @@ export class ManagerController {
     return ManagerMapper.toResDto(result);
   }
 
+  @Roles([RoleEnum.ADMIN])
   @Post('manager')
   public async createManager(
     @CurrentUser() userData: IUserData,
@@ -40,6 +44,7 @@ export class ManagerController {
     return await this.managerService.createManager(userData, dto);
   }
 
+  @Roles([RoleEnum.MANAGER])
   @Patch('me')
   public async updateMe(
     @CurrentUser() userData: IUserData,
@@ -47,6 +52,7 @@ export class ManagerController {
   ): Promise<BaseManagerResDto> {
     return await this.managerService.updateMe(userData, dto);
   }
+  @Roles([RoleEnum.ADMIN])
   @Delete(':managerId')
   public async deleteManager(
     @CurrentUser() userData: IUserData,
@@ -55,6 +61,7 @@ export class ManagerController {
     return await this.managerService.deleteManager(userData, managerId);
   }
 
+  @Roles([RoleEnum.ADMIN])
   @Get('managers')
   public async getAllManagers(
     @CurrentUser() userData: IUserData,
@@ -62,6 +69,7 @@ export class ManagerController {
     return await this.managerService.getAll(userData);
   }
 
+  @Roles([RoleEnum.ADMIN])
   @Get(':managerId')
   public async getManagerById(
     @CurrentUser() userData: IUserData,

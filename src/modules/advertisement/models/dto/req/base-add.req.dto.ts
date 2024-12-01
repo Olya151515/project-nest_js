@@ -21,4 +21,10 @@ export class BaseAddReqDto {
 
   @IsNumber()
   price: number;
+
+  @IsString()
+  brand: string;
+
+  @IsString()
+  model: string;
 }

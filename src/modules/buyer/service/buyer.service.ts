@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
+import { BuyerEntity } from '../../../database/entities/buyer.entity';
 import { IUserData } from '../../auth/models/interfaces/user-data';
 import { AdvertisementRepository } from '../../repository/services/advertisement.repository';
 import { BuyersRepository } from '../../repository/services/buyers.repository';
@@ -30,27 +31,21 @@ export class BuyerService {
     addId: string,
     userData: IUserData,
   ): Promise<BuyerResDto> {
-    const buyer = await this.buyerRepository.findOneBy({
-      id: userData.user_id,
-    });
-    if (!buyer) {
-      throw new NotFoundException('Buyer not found');
-    }
+    const buyer = await this.isBuyerExist(userData.user_id);
 
     const add = await this.addRepository.findOneBy({ id: addId });
     if (!add) {
       throw new NotFoundException('Advertisement not found');
     }
-    const addFavoriteBuyer = add.favoriteBuyers.map((buyer) =>
-      BuyerMapper.toBuyerResDto(buyer),
-    );
-    const isAlreadyFavorite = addFavoriteBuyer.some(
-      (favBuyer) => favBuyer.id === buyer.id,
+    const favoriteAdds = await this.addRepository.findAllByFavBuyerId(buyer.id);
+    const isAlreadyFavorite = favoriteAdds.some(
+      (favAdd) => favAdd.id === add.id,
     );
     if (isAlreadyFavorite) {
       throw new ConflictException('You already have this add in favorites');
     }
-    buyer.favoriteAds.push(add);
+    const allAds = [...favoriteAdds, add];
+    this.buyerRepository.merge(buyer, { favoriteAds: allAds });
     const updatedBuyer = await this.buyerRepository.save(buyer);
     return BuyerMapper.toBuyerResDto(updatedBuyer);
   }
@@ -58,26 +53,19 @@ export class BuyerService {
     userData: IUserData,
     addId: string,
   ): Promise<BuyerResDto> {
-    const buyer = await this.buyerRepository.findOneBy({
-      id: userData.user_id,
-    });
-    if (!buyer) {
-      throw new NotFoundException('Buyer not found');
-    }
+    const buyer = await this.isBuyerExist(userData.user_id);
     const add = await this.addRepository.findOneBy({ id: addId });
     if (!add) {
       throw new NotFoundException('Advertisement not found');
     }
-    const isAddFavorite = buyer.favoriteAds.some(
-      (buyerAdd) => buyerAdd.id === add.id,
-    );
+    const favoriteAdds = await this.addRepository.findAllByFavBuyerId(buyer.id);
+    const isAddFavorite = favoriteAdds.some((favAdd) => favAdd.id === add.id);
+
     if (!isAddFavorite) {
       throw new ConflictException('You do not have  this add in favorites');
     }
 
-    buyer.favoriteAds = buyer.favoriteAds.filter(
-      (favAdd) => favAdd.id !== addId,
-    );
+    buyer.favoriteAds = favoriteAdds.filter((favAdd) => favAdd.id !== addId);
     const updatedBuyer = await this.buyerRepository.save(buyer);
     return BuyerMapper.toBuyerResDto(updatedBuyer);
   }
@@ -86,12 +74,7 @@ export class BuyerService {
     userData: IUserData,
     dto: UpdatedBuyerReqDto,
   ): Promise<UpdatedBuyerResDto> {
-    const buyer = await this.buyerRepository.findOneBy({
-      id: userData.user_id,
-    });
-    if (!buyer) {
-      throw new NotFoundException('Buyer not found');
-    }
+    const buyer = await this.isBuyerExist(userData.user_id);
     this.buyerRepository.merge(buyer, { ...dto });
     const updatedBuyer = await this.buyerRepository.save(buyer);
     return BuyerMapper.toUpdatedBuyerResDto(updatedBuyer);
@@ -102,10 +85,7 @@ export class BuyerService {
     buyerId: string,
     dto: UserBanReqDto,
   ): Promise<void> {
-    const buyer = await this.buyerRepository.findOneBy({ id: buyerId });
-    if (!buyer) {
-      throw new NotFoundException('Buyer not found');
-    }
+    const buyer = await this.isBuyerExist(buyerId);
     const manager = await this.managerRepository.findOneBy({
       id: userData.user_id,
     });
@@ -118,5 +98,12 @@ export class BuyerService {
       bannedBy: manager,
     });
     await this.buyerRepository.save(buyer);
+  }
+  private async isBuyerExist(buyerId: string): Promise<BuyerEntity> {
+    const buyer = await this.buyerRepository.findOneBy({ id: buyerId });
+    if (!buyer) {
+      throw new NotFoundException('Buyer not found');
+    }
+    return buyer;
   }
 }

@@ -1,4 +1,5 @@
 import { BuyerEntity } from '../../../database/entities/buyer.entity';
+import { AddMapper } from '../../advertisement/services/add-mapper';
 import { ManagerMapper } from '../../manager/services/manager.mapper';
 import { BuyerResDto } from '../models/dto/res/buyer.res.dto';
 import { ShortBuyerResDto } from '../models/dto/res/short-buyer.res.dto';
@@ -19,7 +20,9 @@ export class BuyerMapper {
       bannedBy: buyer.bannedBy
         ? ManagerMapper.toBaseResDto(buyer.bannedBy)
         : null,
-      favoriteAds: buyer.favoriteAds ? [] : null,
+      favoriteAds: buyer.favoriteAds
+        ? buyer.favoriteAds.map((add) => AddMapper.toShortResDto(add))
+        : null,
     };
   }
   public static toUpdatedBuyerResDto(buyer: BuyerEntity): UpdatedBuyerResDto {

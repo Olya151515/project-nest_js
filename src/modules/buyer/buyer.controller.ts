@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+import { Roles } from '../../common/decorators/role-decorator';
+import { RoleEnum } from '../../database/entities/enums/role-enum';
 import { CurrentUser } from '../auth/decorators/current-user-decorator';
 import { IUserData } from '../auth/models/interfaces/user-data';
 import { UpdatedBuyerReqDto } from './models/dto/req/updated-buyer.req.dto';
@@ -22,12 +24,14 @@ import { BuyerService } from './service/buyer.service';
 @Controller('buyer')
 export class BuyerController {
   constructor(private readonly buyerService: BuyerService) {}
+  @Roles([RoleEnum.BUYER])
   @Get('me')
   public async getBuyer(
     @CurrentUser() userData: IUserData,
   ): Promise<BuyerResDto> {
     return await this.buyerService.getMe(userData);
   }
+  @Roles([RoleEnum.BUYER])
   @Patch('me')
   public async updateMe(
     @CurrentUser() userData: IUserData,
@@ -36,6 +40,7 @@ export class BuyerController {
     return await this.buyerService.updateMe(userData, dto);
   }
 
+  @Roles([RoleEnum.MANAGER])
   @Delete(':buyerId')
   public async BlockBuyer(
     @CurrentUser() userData: IUserData,
@@ -45,6 +50,7 @@ export class BuyerController {
     await this.buyerService.blockBuyer(userData, buyerId, dto);
   }
 
+  @Roles([RoleEnum.BUYER])
   @Post('favorite/:advertisementId')
   public async favoriteAdd(
     @CurrentUser() userData: IUserData,
@@ -53,6 +59,7 @@ export class BuyerController {
     return await this.buyerService.favoriteAdd(advertisementId, userData);
   }
 
+  @Roles([RoleEnum.BUYER])
   @Delete('favorite/:advertisementId')
   public async deleteFavoriteAdd(
     @CurrentUser() userData: IUserData,

@@ -3,6 +3,7 @@ import { BuyerMapper } from '../../buyer/service/buyer.mapper';
 import { SellerMapper } from '../../seller(user)/services/seller.mapper';
 import { AddResDto } from '../models/dto/res/add.res.dto';
 import { BaseAdsResDto } from '../models/dto/res/base-ads.res.dto';
+import { ShortAddResDto } from '../models/dto/res/short-add.res.dto';
 
 export class AddMapper {
   public static toBaseResDto(add: AdvertisementEntity): BaseAdsResDto {
@@ -13,7 +14,22 @@ export class AddMapper {
       location: add.location,
       price: add.price,
       status: add.status,
-      images: add.images.map((image) => image.imageUrl),
+      brand: add.brand?.name,
+      model: add.brand?.name,
+      seller: SellerMapper.toBaseSellerResDto(add.seller),
+      images: add.images ? add.images.map((image) => image.imageUrl) : null,
+      soldAt: add.soldAt,
+    };
+  }
+  public static toShortResDto(add: AdvertisementEntity): ShortAddResDto {
+    return {
+      id: add.id,
+      description: add.description,
+      title: add.title,
+      location: add.location,
+      price: add.price,
+      status: add.status,
+      images: add.images ? add.images.map((image) => image.imageUrl) : null,
     };
   }
   public static toResDto(add: AdvertisementEntity): AddResDto {
@@ -25,8 +41,9 @@ export class AddMapper {
       price: add.price,
       status: add.status,
       soldAt: add.soldAt,
-      editAttempts: add.editAttempts,
-      images: add.images.map((image) => image.imageUrl),
+      brand: add.brand.name,
+      model: add.model.name,
+      images: add.images ? add.images.map((image) => image.imageUrl) : null,
       favoriteBuyers: add.favoriteBuyers
         ? add.favoriteBuyers.map((buyer) =>
             BuyerMapper.toShortBuyerResDto(buyer),
