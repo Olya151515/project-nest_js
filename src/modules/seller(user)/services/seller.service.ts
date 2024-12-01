@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { LessThan } from 'typeorm';
 
 import { AccountEnum } from '../../../database/entities/enums/account-enum';

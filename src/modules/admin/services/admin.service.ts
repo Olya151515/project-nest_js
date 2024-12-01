@@ -3,9 +3,7 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 
 import { IUserData } from '../../auth/models/interfaces/user-data';
-import { AuthService } from '../../auth/services/auth.service';
 import { AdminRepository } from '../../repository/services/admin.repository';
-import { ManagersRepository } from '../../repository/services/managers.repository';
 import { UpdateAdminReqDto } from '../models/dto/req/update-admin.req.dto';
 import { AdminResDto } from '../models/dto/res/admin.res.dto';
 import { BaseAdminResDto } from '../models/dto/res/base-admin.res.dto';

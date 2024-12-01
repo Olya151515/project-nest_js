@@ -111,7 +111,6 @@ export class ManagerService {
     if (!manager) {
       throw new ConflictException('Manager does not exist');
     }
-    console.log(manager.admin_id);
     if (admin?.id !== manager.admin_id) {
       throw new ConflictException(
         'You can not delete , you do not create that manager',

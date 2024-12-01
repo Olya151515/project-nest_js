@@ -96,7 +96,6 @@ export class AdvertisementService {
     const pathFile = files.map((file) =>
       this.buildPath('image', add.id, file.originalname),
     );
-    console.log(pathFile);
     pathFile.map((path) =>
       this.carImageRepository.save({ imageUrl: path, advertisementId: add.id }),
     );
@@ -186,7 +185,6 @@ export class AdvertisementService {
 
   private notifyManager(ad: AdvertisementEntity) {
     console.log(`Manager notified about blocked ad: ${ad.id}`);
-    // Тут можна реалізувати реальну інтеграцію з email-сервісом.
   }
   private buildPath(
     itemType: 'image',
@@ -194,6 +192,6 @@ export class AdvertisementService {
     fileName: string,
   ): string {
     const filePath = `${itemType}/${itemId}/${randomUUID()}${path.extname(fileName)}`;
-    return filePath; // use only  template string
+    return filePath;
   }
 }

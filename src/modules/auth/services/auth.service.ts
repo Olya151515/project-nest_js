@@ -16,7 +16,6 @@ import { RefreshTokenRepository } from '../../repository/services/refresh-token.
 import { RoleRepository } from '../../repository/services/role.repository';
 import { SellersRepository } from '../../repository/services/sellers.repository';
 import { UsersRepository } from '../../repository/services/users.repository';
-import { getRepository } from '../helper/get-role';
 import { SignInReqDto } from '../models/dto/req/sign-in.req.dto';
 import { SignUpReqDto } from '../models/dto/req/sign-up.req.dto';
 import { SignUpBuyerReqDto } from '../models/dto/req/sign-up-buyer.req.dto';
