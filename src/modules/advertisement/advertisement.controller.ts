@@ -16,7 +16,6 @@ import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 
 import { ApiFile } from '../../common/decorators/api-file.decorator';
 import { Roles } from '../../common/decorators/role-decorator';
-import { AdvertisementID } from '../../common/types/entity-ids.type';
 import { RoleEnum } from '../../database/entities/enums/role-enum';
 import { CurrentUser } from '../auth/decorators/current-user-decorator';
 import { IUserData } from '../auth/models/interfaces/user-data';
@@ -68,7 +67,7 @@ export class AdvertisementController {
 
   @Get(':advertisementId')
   public async getAdvertisementById(
-    @Param('advertisementId', ParseUUIDPipe) advertisementId: AdvertisementID,
+    @Param('advertisementId', ParseUUIDPipe) advertisementId: string,
   ): Promise<BaseAdsResDto> {
     return await this.advertisementService.getById(advertisementId);
   }
@@ -77,7 +76,7 @@ export class AdvertisementController {
   @Delete(':advertisementId')
   public async deleteAdvertisement(
     @CurrentUser() userData: IUserData,
-    @Param('advertisementId', ParseUUIDPipe) advertisementId: AdvertisementID,
+    @Param('advertisementId', ParseUUIDPipe) advertisementId: string,
   ): Promise<void> {
     return await this.advertisementService.deleteAdd(advertisementId, userData);
   }
@@ -86,7 +85,7 @@ export class AdvertisementController {
   @Patch(':advertisementId')
   public async updateAdvertisement(
     @CurrentUser() userData: IUserData,
-    @Param('advertisementId', ParseUUIDPipe) advertisementId: AdvertisementID,
+    @Param('advertisementId', ParseUUIDPipe) advertisementId: string,
     @Body() dto: UpdateAddReqDto,
   ): Promise<AddResDto> {
     return await this.advertisementService.updateAdd(
